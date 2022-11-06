@@ -1,12 +1,9 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
 generator client {
   provider = "prisma-client-js"
 }
 
 datasource db {
-  provider = "sqlite"
+  provider = "postgresql"
   // NOTE: When using postgresql, mysql or sqlserver, uncomment the @db.Text annotations in model Account below
   // Further reading:
   // https://next-auth.js.org/adapters/prisma#create-the-prisma-schema
@@ -14,25 +11,18 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model Example {
-  id        String   @id @default(cuid())
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-}
-
-// Necessary for Next auth
 model Account {
   id                String  @id @default(cuid())
   userId            String
   type              String
   provider          String
   providerAccountId String
-  refresh_token     String? // @db.Text
-  access_token      String? // @db.Text
+  refresh_token     String? @db.Text
+  access_token      String? @db.Text
   expires_at        Int?
   token_type        String?
   scope             String?
-  id_token          String? // @db.Text
+  id_token          String? @db.Text
   session_state     String?
   user              User    @relation(fields: [userId], references: [id], onDelete: Cascade)
 
@@ -48,13 +38,49 @@ model Session {
 }
 
 model User {
-  id            String    @id @default(cuid())
-  name          String?
-  email         String?   @unique
-  emailVerified DateTime?
-  image         String?
-  accounts      Account[]
-  sessions      Session[]
+  id              String               @id @default(cuid())
+  name            String?
+  email           String?              @unique
+  emailVerified   DateTime?
+  image           String?
+  accounts        Account[]
+  sessions        Session[]
+  role            Role @default(STUDENT)
+  achievements    Achievement[]
+  modulesProgress UserModuleProgress[]
+  lessonsProgress UserLessonProgress[]
+  tasksProgress   UserTaskProgress[]
+  suggestions     Suggestion[]
+}
+
+model UserModuleProgress {
+  userId    String
+  user      User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  moduleId  String
+  module    Module  @relation(fields: [moduleId], references: [id], onDelete: Cascade)
+  completed Boolean @default(false)
+
+  @@unique([userId, moduleId])
+}
+
+model UserLessonProgress {
+  userId    String
+  user      User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  lessonId  String
+  lesson    Lesson  @relation(fields: [lessonId], references: [id], onDelete: Cascade)
+  completed Boolean @default(false)
+
+  @@unique([userId, lessonId])
+}
+
+model UserTaskProgress {
+  userId    String
+  user      User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  taskId    String
+  task      Task    @relation(fields: [taskId], references: [id], onDelete: Cascade)
+  completed Boolean @default(false)
+
+  @@unique([userId, taskId])
 }
 
 model VerificationToken {
@@ -63,4 +89,56 @@ model VerificationToken {
   expires    DateTime
 
   @@unique([identifier, token])
+}
+
+model Module {
+  id          String               @id @default(cuid())
+  name        String
+  updatedAt   DateTime             @default(now())
+  lessons     Lesson[]
+  users       UserModuleProgress[]
+  suggestions Suggestion[]
+}
+
+model Achievement {
+  id          String   @id @default(cuid())
+  userId      String
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  name        String
+  image       String?
+  conqueredAt DateTime @default(now())
+}
+
+model Lesson {
+  id        String               @id @default(cuid())
+  name      String
+  createdAt DateTime             @default(now())
+  users     UserLessonProgress[]
+  moduleId  String
+  module    Module               @relation(fields: [moduleId], references: [id], onDelete: Cascade)
+  tasks     Task[]
+}
+
+model Task {
+  id        String             @id @default(cuid())
+  name      String
+  createdAt DateTime           @default(now())
+  lessonId  String
+  lesson    Lesson             @relation(fields: [lessonId], references: [id], onDelete: Cascade)
+  users     UserTaskProgress[]
+}
+
+model Suggestion {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  moduleId  String
+  module    Module   @relation(fields: [moduleId], references: [id], onDelete: Cascade)
+}
+
+enum Role {
+  TEACHER
+  STUDENT
+  UNAUTHENTICATED
 }

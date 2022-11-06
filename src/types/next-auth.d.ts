@@ -1,3 +1,4 @@
+import type { Roles } from "@utils/constants";
 import { type DefaultSession } from "next-auth";
 
 declare module "next-auth" {
@@ -7,6 +8,10 @@ declare module "next-auth" {
   interface Session {
     user?: {
       id: string;
+      role: Roles;
     } & DefaultSession["user"];
+  }
+  interface User {
+    role: Roles;
   }
 }
