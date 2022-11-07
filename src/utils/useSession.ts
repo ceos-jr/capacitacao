@@ -1,7 +1,6 @@
 /* eslint-disable react-hooks/rules-of-hooks */
 import { useSession as useNextAuthSession } from "next-auth/react";
 import { useEffect, useState } from "react";
-import { Roles } from "./constants";
 import { getMockUser } from "./mock-user";
 
 export const useSession = () => {
@@ -24,15 +23,13 @@ export const useSession = () => {
     } else {
       return {
         data:
-          mockRole === Roles.Unauthenticated
+          mockRole === "UNAUTHENTICATED"
             ? null
             : {
                 user: getMockUser(mockRole),
               },
         status:
-          mockRole === Roles.Unauthenticated
-            ? "unauthenticated"
-            : "authenticated",
+          mockRole === "UNAUTHENTICATED" ? "unauthenticated" : "authenticated",
       };
     }
   } else {

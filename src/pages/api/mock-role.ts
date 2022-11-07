@@ -11,7 +11,7 @@ export const getMockRole = async () => {
   );
   if (fileContents === Roles.Teacher) return Roles.Teacher;
   else if (fileContents === Roles.Student) return Roles.Student;
-  else return Roles.Unauthenticated;
+  else return null;
 };
 
 export const setMockRole = async (role: Roles) => {
