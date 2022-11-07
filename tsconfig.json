@@ -19,9 +19,17 @@
     "paths": {
       "@components/*": ["src/components/*"],
       "@trpc/*": ["src/server/trpc/*"],
-      "@utils/*": ["src/utils/*"]
+      "@utils/*": ["src/utils/*"],
+      "@tests/*": ["tests/*"]
     }
   },
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", "**/*.cjs", "**/*.mjs"],
+  "include": [
+    "next-env.d.ts",
+    "**/*.js",
+    "**/*.ts",
+    "**/*.tsx",
+    "**/*.cjs",
+    "**/*.mjs"
+  ],
   "exclude": ["node_modules"]
 }

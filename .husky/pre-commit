@@ -3,5 +3,4 @@
 
 yarn lint-staged
 yarn type-check
-# Quando os testes comecarem
-# yarn test:ci
+yarn test:ci

@@ -2,6 +2,6 @@
 . "$(dirname -- "$0")/_/husky.sh"
 
 yarn lint
-# Quando testes estiverem funfando
-# yarn test:ci
+yarn type-check
+yarn test
 # yarn test:e2e
