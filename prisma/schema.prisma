@@ -17,7 +17,7 @@ model Account {
   type              String
   provider          String
   providerAccountId String
-  refresh_token     String? @db.Text
+            refresh_token     String? @db.Text
   access_token      String? @db.Text
   expires_at        Int?
   token_type        String?
@@ -45,7 +45,7 @@ model User {
   image           String?
   accounts        Account[]
   sessions        Session[]
-  role            Role @default(STUDENT)
+  role            Role                 @default(STUDENT)
   achievements    Achievement[]
   modulesProgress UserModuleProgress[]
   lessonsProgress UserLessonProgress[]
@@ -94,6 +94,7 @@ model VerificationToken {
 model Module {
   id          String               @id @default(cuid())
   name        String
+  description String?              @db.Text
   updatedAt   DateTime             @default(now())
   lessons     Lesson[]
   users       UserModuleProgress[]
@@ -113,6 +114,8 @@ model Lesson {
   id        String               @id @default(cuid())
   name      String
   createdAt DateTime             @default(now())
+  updatedAt DateTime             @updatedAt
+  richText String @db.Text
   users     UserLessonProgress[]
   moduleId  String
   module    Module               @relation(fields: [moduleId], references: [id], onDelete: Cascade)
