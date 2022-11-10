@@ -34,12 +34,13 @@
     "react": "18.2.0",
     "react-dom": "18.2.0",
     "react-icons": "^4.6.0",
-    "slate": "^0.85.0",
-    "slate-react": "^0.83.2",
+    "react-markdown": "^8.0.3",
+    "remark-gfm": "^3.0.1",
     "superjson": "1.9.1",
     "zod": "^3.18.0"
   },
   "devDependencies": {
+    "@tailwindcss/typography": "^0.5.8",
     "@testing-library/jest-dom": "^5.16.5",
     "@testing-library/react": "^13.4.0",
     "@types/node": "18.0.0",
