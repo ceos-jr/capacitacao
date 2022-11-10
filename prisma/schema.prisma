@@ -45,12 +45,13 @@ model User {
   image           String?
   accounts        Account[]
   sessions        Session[]
-  role            Role                 @default(STUDENT)
+  role            Role                 @default(MEMBER)
   achievements    Achievement[]
   modulesProgress UserModuleProgress[]
   lessonsProgress UserLessonProgress[]
   tasksProgress   UserTaskProgress[]
-  suggestions     Suggestion[]
+  modSuggestions     ModSuggestion[]
+  lesSuggestions     LesSuggestion[]
 }
 
 model UserModuleProgress {
@@ -69,6 +70,7 @@ model UserLessonProgress {
   lessonId  String
   lesson    Lesson  @relation(fields: [lessonId], references: [id], onDelete: Cascade)
   completed Boolean @default(false)
+  tasksCompleted Int @default(0)
 
   @@unique([userId, lessonId])
 }
@@ -98,7 +100,7 @@ model Module {
   updatedAt   DateTime             @default(now())
   lessons     Lesson[]
   users       UserModuleProgress[]
-  suggestions Suggestion[]
+  suggestions ModSuggestion[]
 }
 
 model Achievement {
@@ -120,6 +122,10 @@ model Lesson {
   moduleId  String
   module    Module               @relation(fields: [moduleId], references: [id], onDelete: Cascade)
   tasks     Task[]
+  videos Video[]
+  links Link[]
+  projects Project[]
+  suggestions LesSuggestion[]
 }
 
 model Task {
@@ -131,17 +137,56 @@ model Task {
   users     UserTaskProgress[]
 }
 
-model Suggestion {
+model Video {
+  id        String             @id @default(cuid())
+  name      String
+  url      String
+  description String?
+  lessonId  String
+  lesson    Lesson             @relation(fields: [lessonId], references: [id], onDelete: Cascade)
+}
+
+model Project {
+  id        String             @id @default(cuid())
+  name      String
+  richText String
+  lessonId  String
+  lesson    Lesson             @relation(fields: [lessonId], references: [id], onDelete: Cascade)
+}
+
+model Link {
+  id        String             @id @default(cuid())
+  name      String
+  url      String
+  description String?
+  lessonId  String
+  lesson    Lesson             @relation(fields: [lessonId], references: [id], onDelete: Cascade)
+}
+
+model ModSuggestion {
   id        String   @id @default(cuid())
   createdAt DateTime @default(now())
   userId    String
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   moduleId  String
   module    Module   @relation(fields: [moduleId], references: [id], onDelete: Cascade)
+
+	@@map("mod_suggestions")
+}
+
+model LesSuggestion {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  lessonId  String
+  lesson    Lesson   @relation(fields: [lessonId], references: [id], onDelete: Cascade)
+
+	@@map("les_suggestions")
 }
 
 enum Role {
-  TEACHER
-  STUDENT
+  ADMIN
+  MEMBER
   UNAUTHENTICATED
 }

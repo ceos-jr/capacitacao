@@ -1,16 +1,16 @@
 import { Roles } from "../utils/constants";
 
 export const mockUsers = {
-  TEACHER: {
+  ADMIN: {
     id: "al814zcy80074hloomogrg1mv",
-    role: Roles.Teacher,
+    role: Roles.Admin,
     name: "Teacher Migol",
     email: "migol@ceos.com",
     image: null,
   },
-  STUDENT: {
+  MEMBER: {
     id: "bl814zcy80074hloomogrg1mv",
-    role: Roles.Student,
+    role: Roles.Member,
     name: "Student Tubias",
     email: "tubias@ceos.com",
     image: null,

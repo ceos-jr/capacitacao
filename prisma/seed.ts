@@ -20,53 +20,57 @@ const modules: Prisma.ModuleCreateInput[] = [
   },
 ];
 
-// const lessons: Prisma.LessonCreateManyInput[] = [
-//   {
-//     id: "cla8ssx1p000308l028yn0hnn",
-//     name: "Seletores, Especificidade, Cascata e Herança",
-//     moduleId: modules[0]?.id as string,
-//   },
-//   {
-//     name: "Posicionamento CSS",
-//     moduleId: modules[0]?.id as string,
-//   },
-//   {
-//     name: "Flexbox Layout",
-//     moduleId: modules[0]?.id as string,
-//   },
-//   {
-//     name: "Grid Layout",
-//     moduleId: modules[0]?.id as string,
-//   },
-// ];
+const lessons: Prisma.LessonCreateManyInput[] = [
+  {
+    id: "cla8ssx1p000308l028yn0hnn",
+    name: "Seletores, Especificidade, Cascata e Herança",
+    moduleId: modules[0]?.id as string,
+    richText: "",
+  },
+  {
+    name: "Posicionamento CSS",
+    moduleId: modules[0]?.id as string,
+    richText: "",
+  },
+  {
+    name: "Flexbox Layout",
+    moduleId: modules[0]?.id as string,
+    richText: "",
+  },
+  {
+    name: "Grid Layout",
+    moduleId: modules[0]?.id as string,
+    richText: "",
+  },
+];
 
 async function main() {
   console.log(`Start seeding ...`);
   console.log("creating users");
   await prisma.user.upsert({
     create: {
-      id: mU.TEACHER.id,
-      name: mU.TEACHER.name,
-      email: mU.TEACHER.email,
-      role: "TEACHER",
+      id: mU.ADMIN.id,
+      name: mU.ADMIN.name,
+      email: mU.ADMIN.email,
+      role: "ADMIN",
     },
     update: {},
-    where: { email: mU.TEACHER.email },
+    where: { email: mU.ADMIN.email },
   });
   await prisma.user.upsert({
     create: {
-      id: mU.STUDENT.id,
-      name: mU.STUDENT.name,
-      email: mU.STUDENT.email,
-      role: "STUDENT",
+      id: mU.MEMBER.id,
+      name: mU.MEMBER.name,
+      email: mU.MEMBER.email,
+      role: "MEMBER",
     },
     update: {},
-    where: { email: mU.STUDENT.email },
+    where: { email: mU.MEMBER.email },
   });
-  // console.log("creating modules");
-  // await prisma.module.createMany({ data: modules });
+  console.log("creating modules");
+  await prisma.module.createMany({ data: modules });
   console.log("creating lessons");
-  // await prisma.lesson.createMany({ data: lessons });
+  await prisma.lesson.createMany({ data: lessons });
 
   console.log(`Seeding finished.`);
 }

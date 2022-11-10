@@ -25,14 +25,14 @@ export const ChangeRoleFooter = () => {
             DEVELOPMENT ROLE SWITCHER:
             <button
               onClick={() => {
-                becomeRole(Roles.Student);
+                becomeRole(Roles.Member);
               }}
             >
               student
             </button>
             <button
               onClick={() => {
-                becomeRole(Roles.Teacher);
+                becomeRole(Roles.Admin);
               }}
             >
               teacher
