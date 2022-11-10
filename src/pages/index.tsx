@@ -9,7 +9,7 @@ import { useSession } from "@utils/useSession";
 import { Heading } from "@chakra-ui/react";
 import DashboardLayout from "@components/Layout/DashboardLayout";
 
-const Home: NextPage = () => {
+const Home = () => {
   return (
     <>
       <Head>
@@ -17,20 +17,22 @@ const Home: NextPage = () => {
         <meta name="description" content="CEOS Capacitacao" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <DashboardLayout>
-        <main className="container flex flex-col justify-center items-center p-4 mx-auto min-h-screen">
-          <Heading as="h1" size="4xl">
-            Testando{" "}
-          </Heading>
-          <AuthShowcase />
-          <ChangeRoleFooter />
-        </main>
-      </DashboardLayout>
+      <main className="container flex flex-col justify-center items-center p-4 mx-auto min-h-screen">
+        <Heading as="h1" size="4xl">
+          Testando{" "}
+        </Heading>
+        <AuthShowcase />
+        <ChangeRoleFooter />
+      </main>
     </>
   );
 };
 
 export default Home;
+
+Home.getLayout = function getLayout(page: React.ReactElement) {
+  return <DashboardLayout>{page}</DashboardLayout>;
+};
 
 const AuthShowcase: React.FC = () => {
   const { data: sessionData } = useSession();

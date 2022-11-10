@@ -1,15 +1,47 @@
-import { Heading, Text, Stack, Skeleton, SkeletonText } from "@chakra-ui/react";
+import {
+  Heading,
+  Text,
+  Stack,
+  Skeleton,
+  SkeletonText,
+  HStack,
+  Button,
+} from "@chakra-ui/react";
 import DashboardLayout from "@components/Layout/DashboardLayout";
 import LessonsList from "@components/modules/LessonsList";
 import { trpc } from "@utils/trpc";
 import Head from "next/head";
 import { useRouter } from "next/router";
+import { type UserModuleProgress } from "@prisma/client";
 
 const UniqueModule = () => {
-  const id = useRouter().query.id as string;
+  const moduleId = useRouter().query.moduleId as string;
   const { data: module } = trpc.module.getUnique.useQuery({
-    id,
+    moduleId,
   });
+  const { data: userRel } = trpc.module.getUserModStats.useQuery({ moduleId });
+  const utils = trpc.useContext();
+
+  const subsToModule = trpc.module.subsToModule.useMutation({
+    async onMutate() {
+      const dummyUser: UserModuleProgress = {
+        userId: "123123",
+        moduleId: moduleId,
+        completed: false,
+      };
+      await utils.module.getUserModStats.cancel();
+      const prevData = utils.module.getUserModStats.getData();
+      utils.module.getUserModStats.setData(dummyUser);
+      return { prevData };
+    },
+    onError(err, newPost, ctx) {
+      utils.module.getUserModStats.setData(ctx?.prevData);
+    },
+    onSettled() {
+      utils.module.getUserModStats.invalidate();
+    },
+  });
+
   return (
     <>
       <Head>
@@ -17,26 +49,38 @@ const UniqueModule = () => {
         <meta name="description" content="CEOS Capacitacao" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <DashboardLayout>
-        <main className="container flex flex-col p-4 mx-auto h-max">
-          {!module ? (
-            <UniqueModuleSkeleton />
-          ) : (
-            <>
+      <main className="container flex flex-col p-4 mx-auto h-max">
+        {!module ? (
+          <UniqueModuleSkeleton />
+        ) : (
+          <>
+            <HStack justifyContent="space-between">
               <Heading as="h1" size="3xl">
                 {`Modulo de ${module.name}`}
               </Heading>
-              <Text>{module?.description}</Text>
-              <LessonsList lessons={module.lessons} />
-            </>
-          )}
-        </main>
-      </DashboardLayout>
+              {!userRel && (
+                <Button
+                  colorScheme="green"
+                  onClick={() => subsToModule.mutate({ moduleId })}
+                >
+                  Inscrever
+                </Button>
+              )}
+            </HStack>
+            <Text>{module?.description}</Text>
+            <LessonsList lessons={module.lessons} userModRel={userRel} />
+          </>
+        )}
+      </main>
     </>
   );
 };
 
 export default UniqueModule;
+
+UniqueModule.getLayout = function getLayout(page: React.ReactElement) {
+  return <DashboardLayout>{page}</DashboardLayout>;
+};
 
 const UniqueModuleSkeleton = () => {
   return (
