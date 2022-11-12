@@ -32,6 +32,8 @@ import type { IconType } from "react-icons";
 import NextLink from "next/link";
 import { useSession } from "@utils/useSession";
 import NextImage from "next/image";
+import Logo from "./Logo";
+import LogoExtended from "./LogoExtended";
 
 interface LinkItemProps {
   name: string;
@@ -91,9 +93,7 @@ const SidebarContent = ({ onClose, ...rest }: SidebarProps) => {
       {...rest}
     >
       <Flex h="20" alignItems="center" mx="8" justifyContent="space-between">
-        <Text fontSize="2xl" fontFamily="monospace" fontWeight="bold">
-          Logo
-        </Text>
+        <LogoExtended />
         <CloseButton display={{ base: "flex", md: "none" }} onClick={onClose} />
       </Flex>
       {LinkItems.map((link, index) => (
@@ -164,16 +164,7 @@ const MobileNav = ({ onOpen, ...rest }: MobileProps) => {
         aria-label="open menu"
         icon={<FiMenu />}
       />
-
-      <Text
-        display={{ base: "flex", md: "none" }}
-        fontSize="2xl"
-        fontFamily="monospace"
-        fontWeight="bold"
-      >
-        Logo
-      </Text>
-
+      <Logo className="inline-flex ml-10 md:hidden text-primary" />
       <HStack spacing={{ base: "0", md: "6" }}>
         <IconButton
           size="lg"
@@ -223,9 +214,6 @@ const MobileNav = ({ onOpen, ...rest }: MobileProps) => {
               </MenuItem>
               <MenuItem _focus={{ bg: "primary", textColor: "white" }}>
                 Settings
-              </MenuItem>
-              <MenuItem _focus={{ bg: "primary", textColor: "white" }}>
-                Billing
               </MenuItem>
               <MenuDivider />
               <MenuItem _focus={{ bg: "primary", textColor: "white" }}>
