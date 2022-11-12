@@ -19,6 +19,7 @@ import {
   AiOutlinePlus,
 } from "react-icons/ai";
 import { trpc } from "@utils/trpc";
+import { useRouter } from "next/router";
 
 export const FormSchema = z.object({
   name: z.string().min(1),
@@ -53,6 +54,7 @@ const CreateModule = () => {
   });
 
   const createModWLessons = trpc.module.createModWLessons.useMutation();
+  const router = useRouter();
 
   const onSubmit = async (data: FormSchemaType) => {
     data.lessons.forEach((_, index) => {
@@ -60,6 +62,7 @@ const CreateModule = () => {
       data.lessons[index]!.index = index + 1;
     });
     createModWLessons.mutate(data);
+    router.push("/modules");
   };
   return (
     <>

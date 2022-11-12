@@ -7,6 +7,7 @@ import ModuleCard from "@components/modules/ModuleCard";
 import { useSession } from "@utils/useSession";
 import { Roles } from "@utils/constants";
 import { BsJournalPlus } from "react-icons/bs";
+import NextLink from "next/link";
 
 const Modules = () => {
   const { data: allModules, error } = trpc.module.getAll.useQuery();
@@ -25,14 +26,17 @@ const Modules = () => {
             Todos os Modulos
           </Heading>
           {session?.user?.role === Roles.Admin && (
-            <Button
-              colorScheme="whatsapp"
-              variant="solid"
-              className="hidden sm:inline-flex"
-              leftIcon={<BsJournalPlus />}
-            >
-              Criar
-            </Button>
+            <NextLink href="/modules/create">
+              {" "}
+              <Button
+                colorScheme="whatsapp"
+                variant="solid"
+                className="hidden sm:inline-flex"
+                leftIcon={<BsJournalPlus />}
+              >
+                Criar
+              </Button>
+            </NextLink>
           )}
         </div>
         <SimpleGrid columns={{ sm: 2, md: 3, lg: 4 }} gap={6}>
