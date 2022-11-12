@@ -35,6 +35,7 @@ export const authOptions: NextAuthOptions = {
       clientSecret: env.GITHUB_CLIENT_SECRET as string,
     }),
   ],
+  pages: { signIn: "/login" },
   debug: env.NODE_ENV === "development" ? true : false,
 };
 

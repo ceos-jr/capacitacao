@@ -1,7 +1,6 @@
 import type { BoxProps, FlexProps } from "@chakra-ui/react";
 import {
   IconButton,
-  Avatar,
   Box,
   CloseButton,
   Flex,
@@ -34,6 +33,13 @@ import { useSession } from "@utils/useSession";
 import NextImage from "next/image";
 import Logo from "./Logo";
 import LogoExtended from "./LogoExtended";
+import { signOut } from "next-auth/react";
+import { Inter } from "@next/font/google";
+
+const inter = Inter({
+  variable: "--font-inter",
+  subsets: ["latin"],
+});
 
 interface LinkItemProps {
   name: string;
@@ -49,7 +55,11 @@ const LinkItems: Array<LinkItemProps> = [
 const DashboardLayout = ({ children }: { children: React.ReactNode }) => {
   const { isOpen, onOpen, onClose } = useDisclosure();
   return (
-    <Box minH="100vh" bg={useColorModeValue("gray.100", "gray.900")}>
+    <Box
+      minH="100vh"
+      bg={useColorModeValue("gray.100", "gray.900")}
+      className={`${inter.variable} font-inter`}
+    >
       <SidebarContent
         onClose={() => onClose}
         display={{ base: "none", md: "block" }}
@@ -186,7 +196,7 @@ const MobileNav = ({ onOpen, ...rest }: MobileProps) => {
                       src={session.user.image}
                       alt="user avatar"
                       fill
-                      className="object-cover"
+                      className="object-cover rounded-full"
                     />
                   ) : (
                     <FaUserCircle className="w-full h-full" />
@@ -216,7 +226,10 @@ const MobileNav = ({ onOpen, ...rest }: MobileProps) => {
                 Settings
               </MenuItem>
               <MenuDivider />
-              <MenuItem _focus={{ bg: "primary", textColor: "white" }}>
+              <MenuItem
+                _focus={{ bg: "primary", textColor: "white" }}
+                onClick={() => signOut()}
+              >
                 Sign out
               </MenuItem>
             </MenuList>

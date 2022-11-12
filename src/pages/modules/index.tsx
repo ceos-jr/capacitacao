@@ -15,9 +15,8 @@ const Modules = () => {
   return (
     <>
       <Head>
-        <title>Dashboard - CEOS</title>
+        <title>Modulos • CEOS</title>
         <meta name="description" content="CEOS Capacitacao" />
-        <link rel="icon" href="/favicon.ico" />
       </Head>
       <main className="container flex flex-col gap-4 p-4 mx-auto min-h-screen">
         <div className="flex flex-col gap-2 justify-between sm:flex-row">

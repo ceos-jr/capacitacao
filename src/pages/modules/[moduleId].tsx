@@ -60,9 +60,8 @@ const UniqueModule = () => {
   return (
     <>
       <Head>
-        <title>Dashboard - CEOS</title>
+        <title>{module?.name} • CEOS</title>
         <meta name="description" content="CEOS Capacitacao" />
-        <link rel="icon" href="/favicon.ico" />
       </Head>
       <main className="container flex flex-col p-4 mx-auto h-max">
         {!module ? (

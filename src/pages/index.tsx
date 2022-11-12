@@ -6,14 +6,14 @@ import ChangeRoleFooter from "@components/Layout/ChangeRoleFooter";
 import { useSession } from "@utils/useSession";
 
 import DashboardLayout from "@components/Layout/DashboardLayout";
+import { getServerAuthSession } from "src/server/common/get-server-auth-session";
 
 const Home = () => {
   return (
     <>
       <Head>
-        <title>Dashboard - CEOS</title>
+        <title>Dashboard • CEOS</title>
         <meta name="description" content="CEOS Capacitacao" />
-        <link rel="icon" href="/favicon.ico" />
       </Head>
       <main className="container flex flex-col justify-center items-center p-4 mx-auto min-h-screen">
         <AuthShowcase />
@@ -38,7 +38,7 @@ const AuthShowcase: React.FC = () => {
   );
 
   return (
-    <div className="flex flex-col gap-2 justify-center items-center">
+    <div className="flex flex-col gap-2 justify-center items-center font-inter">
       {sessionData && (
         <p className="text-2xl text-blue-500">
           Logged in as {sessionData?.user?.name}
@@ -56,3 +56,20 @@ const AuthShowcase: React.FC = () => {
     </div>
   );
 };
+
+export async function getServerSideProps(context: any) {
+  const session = await getServerAuthSession(context);
+
+  console.log("session", session);
+
+  if (!session) {
+    return {
+      redirect: {
+        destination: "/login",
+        permanent: false,
+      },
+    };
+  } else {
+    return { props: {} };
+  }
+}

@@ -117,7 +117,6 @@ const Edit = () => {
       <Head>
         <title>{lesson.data?.name} - CEOS</title>
         <meta name="description" content="CEOS Capacitacao" />
-        <link rel="icon" href="/favicon.ico" />
       </Head>
       <main className="container flex flex-col gap-4 p-4 mx-auto">
         {!lesson.data ? (
