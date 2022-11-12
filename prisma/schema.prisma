@@ -17,7 +17,7 @@ model Account {
   type              String
   provider          String
   providerAccountId String
-            refresh_token     String? @db.Text
+  refresh_token     String? @db.Text
   access_token      String? @db.Text
   expires_at        Int?
   token_type        String?
@@ -50,37 +50,42 @@ model User {
   modulesProgress UserModuleProgress[]
   lessonsProgress UserLessonProgress[]
   tasksProgress   UserTaskProgress[]
-  modSuggestions     ModSuggestion[]
-  lesSuggestions     LesSuggestion[]
+  modSuggestions  ModSuggestion[]
+  lesSuggestions  LesSuggestion[]
 }
 
 model UserModuleProgress {
-  userId    String
-  user      User    @relation(fields: [userId], references: [id], onDelete: Cascade)
-  moduleId  String
-  module    Module  @relation(fields: [moduleId], references: [id], onDelete: Cascade)
-  completed Boolean @default(false)
+  userId     String
+  user       User                 @relation(fields: [userId], references: [id], onDelete: Cascade)
+  moduleId   String
+  module     Module               @relation(fields: [moduleId], references: [id], onDelete: Cascade)
+  lessonProg UserLessonProgress[]
+  completed  Boolean              @default(false)
 
   @@unique([userId, moduleId])
 }
 
 model UserLessonProgress {
-  userId    String
-  user      User    @relation(fields: [userId], references: [id], onDelete: Cascade)
-  lessonId  String
-  lesson    Lesson  @relation(fields: [lessonId], references: [id], onDelete: Cascade)
-  completed Boolean @default(false)
-  tasksCompleted Int @default(0)
+  userId      String
+  moduleId    String
+  lessonId    String
+  user        User               @relation(fields: [userId], references: [id], onDelete: Cascade)
+  lesson      Lesson             @relation(fields: [lessonId], references: [id], onDelete: Cascade)
+  userModProg UserModuleProgress @relation(fields: [userId, moduleId], references: [userId, moduleId], onDelete: Cascade)
+  completed   Boolean            @default(false)
+  tasksProg   UserTaskProgress[]
 
   @@unique([userId, lessonId])
 }
 
 model UserTaskProgress {
-  userId    String
-  user      User    @relation(fields: [userId], references: [id], onDelete: Cascade)
-  taskId    String
-  task      Task    @relation(fields: [taskId], references: [id], onDelete: Cascade)
-  completed Boolean @default(false)
+  userId       String
+  user         User               @relation(fields: [userId], references: [id], onDelete: Cascade)
+  taskId       String
+  task         Task               @relation(fields: [taskId], references: [id], onDelete: Cascade)
+  lessonId     String
+  userLessProg UserLessonProgress @relation(fields: [userId, lessonId], references: [userId, lessonId], onDelete: Cascade)
+  completed    Boolean            @default(false)
 
   @@unique([userId, taskId])
 }
@@ -113,18 +118,19 @@ model Achievement {
 }
 
 model Lesson {
-  id        String               @id @default(cuid())
-  name      String
-  createdAt DateTime             @default(now())
-  updatedAt DateTime             @updatedAt
-  richText String @db.Text
-  users     UserLessonProgress[]
-  moduleId  String
-  module    Module               @relation(fields: [moduleId], references: [id], onDelete: Cascade)
-  tasks     Task[]
-  videos Video[]
-  links Link[]
-  projects Project[]
+  id          String               @id @default(cuid())
+  index       Int
+  name        String
+  createdAt   DateTime             @default(now())
+  updatedAt   DateTime             @updatedAt
+  richText    String               @db.Text
+  users       UserLessonProgress[]
+  moduleId    String
+  module      Module               @relation(fields: [moduleId], references: [id], onDelete: Cascade)
+  tasks       Task[]
+  videos      Video[]
+  links       Link[]
+  projects    Project[]
   suggestions LesSuggestion[]
 }
 
@@ -138,29 +144,29 @@ model Task {
 }
 
 model Video {
-  id        String             @id @default(cuid())
-  name      String
-  url      String
+  id          String  @id @default(cuid())
+  name        String
+  url         String
   description String?
-  lessonId  String
-  lesson    Lesson             @relation(fields: [lessonId], references: [id], onDelete: Cascade)
+  lessonId    String
+  lesson      Lesson  @relation(fields: [lessonId], references: [id], onDelete: Cascade)
 }
 
 model Project {
-  id        String             @id @default(cuid())
-  name      String
+  id       String @id @default(cuid())
+  name     String
   richText String
-  lessonId  String
-  lesson    Lesson             @relation(fields: [lessonId], references: [id], onDelete: Cascade)
+  lessonId String
+  lesson   Lesson @relation(fields: [lessonId], references: [id], onDelete: Cascade)
 }
 
 model Link {
-  id        String             @id @default(cuid())
-  name      String
-  url      String
+  id          String  @id @default(cuid())
+  name        String
+  url         String
   description String?
-  lessonId  String
-  lesson    Lesson             @relation(fields: [lessonId], references: [id], onDelete: Cascade)
+  lessonId    String
+  lesson      Lesson  @relation(fields: [lessonId], references: [id], onDelete: Cascade)
 }
 
 model ModSuggestion {
@@ -171,7 +177,7 @@ model ModSuggestion {
   moduleId  String
   module    Module   @relation(fields: [moduleId], references: [id], onDelete: Cascade)
 
-	@@map("mod_suggestions")
+  @@map("mod_suggestions")
 }
 
 model LesSuggestion {
@@ -182,7 +188,7 @@ model LesSuggestion {
   lessonId  String
   lesson    Lesson   @relation(fields: [lessonId], references: [id], onDelete: Cascade)
 
-	@@map("les_suggestions")
+  @@map("les_suggestions")
 }
 
 enum Role {

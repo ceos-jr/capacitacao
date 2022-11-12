@@ -23,22 +23,26 @@ const modules: Prisma.ModuleCreateInput[] = [
 const lessons: Prisma.LessonCreateManyInput[] = [
   {
     id: "cla8ssx1p000308l028yn0hnn",
+    index: 1,
     name: "Seletores, Especificidade, Cascata e Herança",
     moduleId: modules[0]?.id as string,
     richText: "",
   },
   {
     name: "Posicionamento CSS",
+    index: 2,
     moduleId: modules[0]?.id as string,
     richText: "",
   },
   {
     name: "Flexbox Layout",
+    index: 3,
     moduleId: modules[0]?.id as string,
     richText: "",
   },
   {
     name: "Grid Layout",
+    index: 4,
     moduleId: modules[0]?.id as string,
     richText: "",
   },
