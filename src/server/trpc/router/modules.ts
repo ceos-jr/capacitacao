@@ -1,6 +1,12 @@
+import { FormSchema } from "src/pages/modules/create";
 import { z } from "zod";
 
-import { router, publicProcedure, protectedProcedure } from "../trpc";
+import {
+  router,
+  publicProcedure,
+  protectedProcedure,
+  adminProcedure,
+} from "../trpc";
 
 export const moduleRouter = router({
   getAll: publicProcedure.query(({ ctx }) => {
@@ -13,9 +19,12 @@ export const moduleRouter = router({
         where: { id: input.moduleId },
         include: {
           lessons: {
-            include: {
-              _count: { select: { tasks: true } },
+            select: {
+              id: true,
+              name: true,
+              tasks: { select: { id: true } },
             },
+            orderBy: { index: "asc" },
           },
         },
       });
@@ -33,12 +42,53 @@ export const moduleRouter = router({
       });
     }),
   subsToModule: protectedProcedure
-    .input(z.object({ moduleId: z.string() }))
+    .input(
+      z.object({
+        id: z.string(),
+        lessons: z.array(z.object({ id: z.string() })),
+      })
+    )
     .mutation(({ ctx, input }) => {
       return ctx.prisma.userModuleProgress.create({
         data: {
           userId: ctx.session.user.id,
-          moduleId: input.moduleId,
+          moduleId: input.id,
+          lessonProg: {
+            createMany: {
+              data: input.lessons.map((lesson) => ({ lessonId: lesson.id })),
+            },
+          },
+        },
+      });
+    }),
+  desubToModule: protectedProcedure
+    .input(
+      z.object({
+        moduleId: z.string(),
+      })
+    )
+    .mutation(({ ctx, input }) => {
+      return ctx.prisma.userModuleProgress.delete({
+        where: {
+          userId_moduleId: {
+            moduleId: input.moduleId,
+            userId: ctx.session.user.id,
+          },
+        },
+      });
+    }),
+  createModWLessons: adminProcedure
+    .input(FormSchema)
+    .mutation(({ ctx, input }) => {
+      return ctx.prisma.module.create({
+        data: {
+          name: input.name,
+          description: input.description,
+          lessons: {
+            createMany: {
+              data: input.lessons,
+            },
+          },
         },
       });
     }),

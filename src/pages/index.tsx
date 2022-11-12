@@ -1,4 +1,3 @@
-import { type NextPage } from "next";
 import Head from "next/head";
 import { signIn, signOut } from "next-auth/react";
 
@@ -6,7 +5,6 @@ import { trpc } from "../utils/trpc";
 import ChangeRoleFooter from "@components/Layout/ChangeRoleFooter";
 import { useSession } from "@utils/useSession";
 
-import { Heading } from "@chakra-ui/react";
 import DashboardLayout from "@components/Layout/DashboardLayout";
 
 const Home = () => {
@@ -18,9 +16,6 @@ const Home = () => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <main className="container flex flex-col justify-center items-center p-4 mx-auto min-h-screen">
-        <Heading as="h1" size="4xl">
-          Testando{" "}
-        </Heading>
         <AuthShowcase />
         <ChangeRoleFooter />
       </main>

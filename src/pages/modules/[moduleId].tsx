@@ -42,6 +42,21 @@ const UniqueModule = () => {
     },
   });
 
+  const desubToModule = trpc.module.desubToModule.useMutation({
+    async onMutate() {
+      await utils.module.getUserModStats.cancel();
+      const prevData = utils.module.getUserModStats.getData();
+      utils.module.getUserModStats.setData(null);
+      return { prevData };
+    },
+    onError(err, newPost, ctx) {
+      utils.module.getUserModStats.setData(ctx?.prevData);
+    },
+    onSettled() {
+      utils.module.getUserModStats.invalidate();
+    },
+  });
+
   return (
     <>
       <Head>
@@ -58,16 +73,27 @@ const UniqueModule = () => {
               <Heading as="h1" size="3xl">
                 {`Modulo de ${module.name}`}
               </Heading>
-              {!userRel && (
-                <Button
-                  colorScheme="green"
-                  onClick={() => subsToModule.mutate({ moduleId })}
-                >
-                  Inscrever
-                </Button>
-              )}
+              <div className="hidden sm:inline-flex">
+                {!userRel ? (
+                  <Button
+                    colorScheme="green"
+                    onClick={() => subsToModule.mutate(module)}
+                  >
+                    Inscrever
+                  </Button>
+                ) : (
+                  <Button
+                    colorScheme="red"
+                    onClick={() =>
+                      desubToModule.mutate({ moduleId: module.id })
+                    }
+                  >
+                    Desinscrever
+                  </Button>
+                )}
+              </div>
             </HStack>
-            <Text>{module?.description}</Text>
+            <Text className="mb-4">{module?.description}</Text>
             <LessonsList lessons={module.lessons} userModRel={userRel} />
           </>
         )}
