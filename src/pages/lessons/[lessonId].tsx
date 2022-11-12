@@ -17,7 +17,7 @@ const Lesson = () => {
   return (
     <>
       <Head>
-        <title>Lesson - CEOS</title>
+        <title>{lesson?.data?.name} • CEOS</title>
         <meta name="description" content="CEOS Capacitacao" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
@@ -30,7 +30,7 @@ const Lesson = () => {
               {lesson.data?.name}
             </Heading>
             <Text as="i">
-              Last update {moment(lesson.data?.createdAt).fromNow()}
+              Last update {moment(lesson.data?.updatedAt).fromNow()}
             </Text>
             <ReactMarkdown
               remarkPlugins={[remarkGfm]}

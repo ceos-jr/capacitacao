@@ -7,40 +7,49 @@ import {
   Thead,
   Tr,
 } from "@chakra-ui/react";
-import { type UserModuleProgress, type Lesson } from "@prisma/client";
+import { type UserModuleProgress } from "@prisma/client";
+import { Roles } from "@utils/constants";
+import { useSession } from "@utils/useSession";
 import NextLink from "next/link";
 
 interface LessonListProps {
-  lessons: (Lesson & { _count: { tasks: number } })[];
+  lessons: { id: string; name: string; tasks: { id: string }[] }[];
   userModRel: UserModuleProgress | null | undefined;
 }
 
 const LessonList = ({ lessons, userModRel }: LessonListProps) => {
+  const { data: session } = useSession();
   return (
     <TableContainer>
       <Table colorScheme="blackAlpha" bgColor="white" rounded="md">
         <Thead>
           <Tr>
-            <Th>Name</Th>
-            <Th isNumeric>Tasks</Th>
-            <Th isNumeric>Actions</Th>
+            <Th>Nome</Th>
+            <Th isNumeric>Atividades</Th>
+            <Th isNumeric>Ações</Th>
           </Tr>
         </Thead>
         <Tbody>
           {lessons.map((lesson) => (
             <Tr key={lesson.id}>
               <Td className="flex gap-x-2 items-center">{lesson.name}</Td>
-              <Td isNumeric>{lesson._count.tasks}</Td>
+              <Td isNumeric>{lesson.tasks.length}</Td>
               <Td isNumeric>
-                {userModRel ? (
+                {userModRel && (
                   <NextLink
                     href={`/lessons/${lesson.id}`}
-                    className="p-3 font-bold bg-gray-200 rounded-md transition-colors cursor-pointer hover:bg-gray-300"
+                    className="p-3 mr-2 font-bold bg-gray-200 rounded-md transition-colors cursor-pointer hover:bg-gray-300"
                   >
                     View
                   </NextLink>
-                ) : (
-                  "no action"
+                )}
+                {session?.user?.role === Roles.Admin && (
+                  <NextLink
+                    href={`/lessons/${lesson.id}/edit`}
+                    className="p-3 mr-2 font-bold bg-gray-200 rounded-md transition-colors cursor-pointer hover:bg-gray-300"
+                  >
+                    Edit
+                  </NextLink>
                 )}
               </Td>
             </Tr>

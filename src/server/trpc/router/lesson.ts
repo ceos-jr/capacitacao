@@ -1,6 +1,7 @@
+import { LessonWUtils } from "src/pages/lessons/[lessonId]/edit";
 import { z } from "zod";
 
-import { router, publicProcedure } from "../trpc";
+import { router, publicProcedure, adminProcedure } from "../trpc";
 
 export const lessonRouter = router({
   getLesson: publicProcedure
@@ -11,20 +12,27 @@ export const lessonRouter = router({
         include: { links: true, videos: true, projects: true },
       });
     }),
-  // getUnique: publicProcedure
-  //   .input(z.object({ id: z.string().nullish(), userId: z.string().nullish() }))
-  //   .query(({ input }) => {
-  //     if (input.id && input.userId) {
-  //       return prisma?.module.findUnique({
-  //         where: { id: input.id },
-  //         include: {
-  //           lessons: {
-  //             include: {
-  //               _count: { select: { tasks: true } },
-  //             },
-  //           },
-  //         },
-  //       });
-  //     }
-  //   }),
+  updateLessonWUtils: adminProcedure
+    .input(LessonWUtils)
+    .mutation(({ input, ctx }) => {
+      return ctx.prisma.lesson.update({
+        where: { id: input.id },
+        data: {
+          name: input.name,
+          richText: input.richText,
+          videos: { createMany: { data: input.videos } },
+          links: { createMany: { data: input.links } },
+          projects: { createMany: { data: input.projects } },
+        },
+      });
+    }),
+  updateVideo: adminProcedure.input(LessonWUtils).query(({ input, ctx }) => {
+    return ctx.prisma.lesson.update({
+      where: { id: input.id },
+      data: {
+        name: input.name,
+        richText: input.richText,
+      },
+    });
+  }),
 });

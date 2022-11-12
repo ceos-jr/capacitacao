@@ -2,12 +2,9 @@
 name: Nova Feature
 about: Uma sugestão para o projeto
 title: ""
-labels: "enhancment"
+labels: "enhancement "
 assignees: ""
 ---
-
-**Is your feature request related to a problem? Please describe.**
-A clear and concise description of what the problem is. Ex. I'm always frustrated when [...]
 
 **A sua feature é relacionada com algum problema?. Por favor descreva**
 Uma descrição sucinta do problema. Ex.: As vezes eu gostaria[...]
