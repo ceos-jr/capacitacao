@@ -2,6 +2,7 @@ import { Heading, Box, LinkBox, LinkOverlay, Text } from "@chakra-ui/react";
 import moment from "moment";
 import NextLink from "next/link";
 import "moment/locale/pt-br";
+import { trpc } from "@utils/trpc";
 moment.locale("pt-br");
 
 type ModuleCardProps = {
@@ -17,8 +18,9 @@ export const ModuleCard = ({
   description,
   id,
 }: ModuleCardProps) => {
+  const updateLastSeen = trpc.user.updModLastSeen.useMutation();
   return (
-    <NextLink href={`/modules/${id}`}>
+    <NextLink href={`/modules/${id}`} onClick={() => updateLastSeen.mutate(id)}>
       <LinkBox
         as="article"
         maxW="sm"
@@ -28,6 +30,7 @@ export const ModuleCard = ({
         rounded="md"
         bg="white"
         role="group"
+        className="shadow-lg"
       >
         <Box as="time" dateTime="2021-01-15 15:30:00 +0000 UTC">
           {moment(updatedAt).fromNow()}

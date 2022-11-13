@@ -16,6 +16,15 @@ export const userRouter = router({
         take: input,
       });
     }),
+  getUnfMod: protectedProcedure.query(({ ctx }) => {
+    return ctx.prisma.userModuleProgress.findMany({
+      where: { userId: ctx.session.user.id, completed: false },
+      include: {
+        module: { select: { name: true, description: true } },
+        lessonProg: { select: { completed: true } },
+      },
+    });
+  }),
   getNumModInProg: protectedProcedure.query(({ ctx }) => {
     return ctx.prisma.userModuleProgress.count({
       where: { userId: ctx.session.user.id, completed: false },
