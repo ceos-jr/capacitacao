@@ -115,7 +115,7 @@ const Edit = () => {
   return (
     <>
       <Head>
-        <title>{lesson.data?.name} - CEOS</title>
+        <title>{lesson.data?.name} • CEOS</title>
         <meta name="description" content="CEOS Capacitacao" />
       </Head>
       <main className="container flex flex-col gap-4 p-4 mx-auto">
@@ -174,7 +174,9 @@ const Edit = () => {
                 control={control}
               />
             </div>
-            <Button type="submit">Criar</Button>
+            <Button type="submit" colorScheme="red" className="mt-4 w-full">
+              Criar
+            </Button>
           </form>
         )}
       </main>

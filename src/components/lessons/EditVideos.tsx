@@ -80,6 +80,7 @@ const EditVideos = ({
                       placeholder="url"
                       {...register(`videos.${index}.url` as const)}
                       bgColor="white"
+                      type="url"
                     />
                     {errors.videos && errors.videos[index]?.url && (
                       <FormErrorMessage>

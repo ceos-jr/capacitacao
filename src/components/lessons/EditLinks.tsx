@@ -79,6 +79,7 @@ const EditLinks = ({
                       placeholder="url"
                       {...register(`links.${index}.url` as const)}
                       bgColor="white"
+                      type="url"
                     />
                     {errors.links && errors.links[index]?.url && (
                       <FormErrorMessage>
