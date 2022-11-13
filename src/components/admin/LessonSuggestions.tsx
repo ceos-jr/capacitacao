@@ -16,6 +16,7 @@ import {
   Highlight,
   Tr,
   Skeleton,
+  useToast,
 } from "@chakra-ui/react";
 import { trpc } from "@utils/trpc";
 import NextLink from "next/link";
@@ -24,18 +25,40 @@ import "moment/locale/pt-br";
 moment.locale("pt-br");
 
 const LessonSuggestions = () => {
+  const toast = useToast();
   const utils = trpc.useContext();
   const lessSuggestions = trpc.admin.getLessSuggestions.useQuery();
   const changeLessStts = trpc.lesson.updSttsOnLessSugg.useMutation({
     async onMutate(data) {
       await utils.admin.getLessSuggestions.cancel();
       const prevData = utils.admin.getLessSuggestions.getData();
-      prevData?.forEach((el) => {
+      const updData = prevData;
+      updData?.forEach((el) => {
         if (el.id === data.id) el.readed = !el.readed;
       });
-      utils.admin.getLessSuggestions.setData(prevData);
+      utils.admin.getLessSuggestions.setData(updData);
+      return { prevData };
+    },
+    onError(err, _, ctx) {
+      utils.admin.getLessSuggestions.setData(ctx?.prevData);
+      toast({
+        title: "Não foi possível atualizar a sugestão",
+        description: `Erro: ${err.message}`,
+        status: "error",
+        duration: 4000,
+        isClosable: true,
+      });
+    },
+    onSuccess() {
+      toast({
+        title: "A sugestão foi atualizada com sucesso",
+        status: "success",
+        duration: 2000,
+        isClosable: true,
+      });
     },
   });
+
   return (
     <>
       {!lessSuggestions.data ? (

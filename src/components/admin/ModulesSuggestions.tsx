@@ -16,6 +16,7 @@ import {
   Highlight,
   Tr,
   Skeleton,
+  useToast,
 } from "@chakra-ui/react";
 import { trpc } from "@utils/trpc";
 import NextLink from "next/link";
@@ -24,16 +25,37 @@ import "moment/locale/pt-br";
 moment.locale("pt-br");
 
 const ModSuggTabAdmin = () => {
+  const toast = useToast();
   const utils = trpc.useContext();
   const modSuggestions = trpc.admin.getModSuggestions.useQuery();
   const changeSuggStts = trpc.module.updSttsOnModSugg.useMutation({
     async onMutate(data) {
       await utils.admin.getModSuggestions.cancel();
       const prevData = utils.admin.getModSuggestions.getData();
-      prevData?.forEach((el) => {
+      const updData = prevData;
+      updData?.forEach((el) => {
         if (el.id === data.id) el.readed = !el.readed;
       });
-      utils.admin.getModSuggestions.setData(prevData);
+      utils.admin.getModSuggestions.setData(updData);
+      return { prevData };
+    },
+    onError(err, _, ctx) {
+      utils.admin.getModSuggestions.setData(ctx?.prevData);
+      toast({
+        title: "Não foi possível atualizar a sugestão",
+        description: `Erro: ${err.message}`,
+        status: "error",
+        duration: 4000,
+        isClosable: true,
+      });
+    },
+    onSuccess() {
+      toast({
+        title: "A sugestão foi atualizada com sucesso",
+        status: "success",
+        duration: 2000,
+        isClosable: true,
+      });
     },
   });
   return (
