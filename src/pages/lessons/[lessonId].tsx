@@ -1,10 +1,20 @@
-import { Heading, Skeleton, SkeletonText, Stack, Text } from "@chakra-ui/react";
+import {
+  Button,
+  Heading,
+  Skeleton,
+  SkeletonText,
+  Stack,
+  Text,
+  useDisclosure,
+} from "@chakra-ui/react";
 import DashboardLayout from "@components/Layout/DashboardLayout";
+import LessSuggestionModal from "@components/Layout/LessSuggestionModal";
 import ResourceTab from "@components/lessons/ResourceTab";
 import { trpc } from "@utils/trpc";
 import moment from "moment";
 import Head from "next/head";
 import { useRouter } from "next/router";
+import { AiOutlineInbox } from "react-icons/ai";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 
@@ -13,6 +23,7 @@ const Lesson = () => {
   const lesson = trpc.lesson.getLesson.useQuery({
     lessonId,
   });
+  const { isOpen, onOpen, onClose } = useDisclosure();
 
   return (
     <>
@@ -21,13 +32,27 @@ const Lesson = () => {
         <meta name="description" content="CEOS Capacitacao" />
       </Head>
       <main className="container flex flex-col gap-4 p-4 mx-auto">
+        <LessSuggestionModal
+          onClose={onClose}
+          isOpen={isOpen}
+          lessonId={lessonId}
+        />
         {!lesson.data ? (
           <LessonSkeleton />
         ) : (
           <>
-            <Heading as="h1" size="2xl">
-              {lesson.data?.name}
-            </Heading>
+            <div className="flex flex-col gap-4 justify-between sm:flex-row sm:items-center">
+              <Heading as="h1" size="2xl">
+                {lesson.data?.name}
+              </Heading>
+              <Button
+                onClick={onOpen}
+                leftIcon={<AiOutlineInbox />}
+                colorScheme="twitter"
+              >
+                Sugestões
+              </Button>
+            </div>
             <Text as="i">
               Ultima atualização {moment(lesson.data?.updatedAt).fromNow()}
             </Text>

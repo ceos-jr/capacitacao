@@ -6,12 +6,15 @@ import {
   SkeletonText,
   Button,
   useToast,
+  useDisclosure,
 } from "@chakra-ui/react";
 import DashboardLayout from "@components/Layout/DashboardLayout";
+import ModSuggestionModal from "@components/Layout/ModSuggestionModal";
 import LessonsList from "@components/modules/LessonsList";
 import { trpc } from "@utils/trpc";
 import Head from "next/head";
 import { useRouter } from "next/router";
+import { AiOutlineInbox } from "react-icons/ai";
 
 const UniqueModule = () => {
   const moduleId = useRouter().query.moduleId as string;
@@ -70,6 +73,8 @@ const UniqueModule = () => {
     },
   });
 
+  const { isOpen, onOpen, onClose } = useDisclosure();
+
   return (
     <>
       <Head>
@@ -77,6 +82,11 @@ const UniqueModule = () => {
         <meta name="description" content="CEOS Capacitacao" />
       </Head>
       <main className="container flex flex-col p-4 mx-auto h-max">
+        <ModSuggestionModal
+          isOpen={isOpen}
+          onClose={onClose}
+          moduleId={moduleId}
+        />
         {!moduleData ? (
           <UniqueModuleSkeleton />
         ) : (
@@ -93,14 +103,23 @@ const UniqueModule = () => {
                   Inscrever
                 </Button>
               ) : (
-                <Button
-                  colorScheme="red"
-                  onClick={() =>
-                    desubToModule.mutate({ moduleId: moduleData.id })
-                  }
-                >
-                  Desinscrever
-                </Button>
+                <div className="flex gap-4">
+                  <Button
+                    onClick={onOpen}
+                    leftIcon={<AiOutlineInbox />}
+                    colorScheme="twitter"
+                  >
+                    Sugestões
+                  </Button>
+                  <Button
+                    colorScheme="red"
+                    onClick={() =>
+                      desubToModule.mutate({ moduleId: moduleData.id })
+                    }
+                  >
+                    Desinscrever
+                  </Button>
+                </div>
               )}
             </div>
             <Text className="my-4">{moduleData?.description}</Text>

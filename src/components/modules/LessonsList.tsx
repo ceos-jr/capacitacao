@@ -7,14 +7,14 @@ import {
   Thead,
   Tr,
 } from "@chakra-ui/react";
-import { type UserModuleProgress } from "@prisma/client";
 import { Roles } from "@utils/constants";
 import { useSession } from "@utils/useSession";
 import NextLink from "next/link";
+import { type RouterTypes } from "@utils/trpc";
 
 interface LessonListProps {
   lessons: { id: string; name: string; tasks: { id: string }[] }[];
-  userModRel: UserModuleProgress | null | undefined;
+  userModRel: RouterTypes["module"]["getUserModStats"]["output"] | undefined;
 }
 
 const LessonList = ({ lessons, userModRel }: LessonListProps) => {

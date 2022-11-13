@@ -18,6 +18,7 @@ const ResourceTab = ({ videos, links, projects }: LinkListProps) => {
       bgColor="white"
       rounded="lg"
       p="4"
+      className="shadow-lg"
     >
       <TabList>
         <Tab>Videos</Tab>

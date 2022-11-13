@@ -1,3 +1,5 @@
+import { LessSuggestionSchema } from "@components/Layout/LessSuggestionModal";
+import { SuggestionFormSchema } from "@components/Layout/ModSuggestionModal";
 import { z } from "zod";
 
 import { router, protectedProcedure } from "../trpc";
@@ -58,6 +60,28 @@ export const userRouter = router({
           userId_lessonId: { userId: ctx.session.user.id, lessonId: input },
         },
         data: { lastTimeSeen: new Date() },
+      });
+    }),
+  createModSugg: protectedProcedure
+    .input(SuggestionFormSchema)
+    .mutation(({ ctx, input }) => {
+      return ctx.prisma.modSuggestion.create({
+        data: {
+          moduleId: input.moduleId,
+          userId: ctx.session.user.id,
+          text: input.text,
+        },
+      });
+    }),
+  createLessSugg: protectedProcedure
+    .input(LessSuggestionSchema)
+    .mutation(({ ctx, input }) => {
+      return ctx.prisma.lesSuggestion.create({
+        data: {
+          lessonId: input.lessonId,
+          userId: ctx.session.user.id,
+          text: input.text,
+        },
       });
     }),
 });
