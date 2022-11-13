@@ -33,4 +33,9 @@ export const adminRouter = router({
       },
     });
   }),
+  delUser: adminProcedure.input(z.string()).mutation(({ ctx, input }) => {
+    return ctx.prisma.user.delete({
+      where: { id: input },
+    });
+  }),
 });

@@ -14,15 +14,60 @@ import {
   Thead,
   Tr,
   Skeleton,
+  AlertDialog,
+  AlertDialogHeader,
+  AlertDialogCloseButton,
+  Button,
+  AlertDialogBody,
+  AlertDialogFooter,
+  AlertDialogContent,
+  useDisclosure,
+  AlertDialogOverlay,
+  useToast,
 } from "@chakra-ui/react";
 import { trpc } from "@utils/trpc";
 import { FaUserCircle } from "react-icons/fa";
 import NextImage from "next/image";
 import { BsThreeDots, BsTrash } from "react-icons/bs";
-import React from "react";
+import React, { useState } from "react";
 
 const UserMembers = () => {
+  const toast = useToast();
+  const utils = trpc.useContext();
   const allMembers = trpc.admin.getAllMembers.useQuery();
+  const delUserMut = trpc.admin.delUser.useMutation({
+    async onMutate() {
+      await utils.admin.getAllMembers.cancel();
+      const prevData = utils.admin.getAllMembers.getData();
+      const filtData = prevData?.filter((user) => user.id !== delUser.id);
+      utils.admin.getAllMembers.setData(filtData);
+      return { prevData };
+    },
+    onError(err, _, ctx) {
+      utils.admin.getAllMembers.setData(ctx?.prevData);
+      toast({
+        title: "Não foi possível deletar o usuário",
+        description: `Erro: ${err.message}`,
+        status: "error",
+        duration: 4000,
+        isClosable: true,
+      });
+    },
+    onSuccess() {
+      toast({
+        title: "Usuário deletado com sucesso.",
+        description: `O usuário ${delUser.name} foi deletado da capacitação.`,
+        status: "success",
+        duration: 4000,
+        isClosable: true,
+      });
+    },
+  });
+
+  const { isOpen, onOpen, onClose } = useDisclosure();
+  const [delUser, setDelUser] = useState({ name: "", id: "" });
+  const cancelRef = React.useRef(null);
+
   return (
     <>
       {!allMembers.data ? (
@@ -33,6 +78,41 @@ const UserMembers = () => {
       ) : (
         <>
           <Heading>Membros da CEOS</Heading>
+          <AlertDialog
+            motionPreset="slideInBottom"
+            leastDestructiveRef={cancelRef}
+            onClose={onClose}
+            isOpen={isOpen}
+            isCentered
+          >
+            <AlertDialogOverlay />
+
+            <AlertDialogContent>
+              <AlertDialogHeader>
+                Deletar usuário {delUser.name}?
+              </AlertDialogHeader>
+              <AlertDialogCloseButton />
+              <AlertDialogBody>
+                Você tem certeza que deseja deletar o usuário? Essa ação não
+                pode ser desfeita
+              </AlertDialogBody>
+              <AlertDialogFooter>
+                <Button ref={cancelRef} onClick={onClose}>
+                  Não
+                </Button>
+                <Button
+                  colorScheme="red"
+                  ml={3}
+                  onClick={() => {
+                    delUserMut.mutate(delUser.id);
+                    onClose();
+                  }}
+                >
+                  Sim
+                </Button>
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialog>
           {allMembers.data.length === 0 ? (
             <Text>
               Nenhum membro da CEOS foi encontrado, veja se há alguma
@@ -88,7 +168,18 @@ const UserMembers = () => {
                         <Menu>
                           <MenuButton as={IconButton} icon={<BsThreeDots />} />
                           <MenuList>
-                            <MenuItem icon={<BsTrash />}>Delete User</MenuItem>
+                            <MenuItem
+                              icon={<BsTrash />}
+                              onClick={() => {
+                                setDelUser({
+                                  name: mem.name as string,
+                                  id: mem.id,
+                                });
+                                onOpen();
+                              }}
+                            >
+                              Delete User
+                            </MenuItem>
                           </MenuList>
                         </Menu>
                       </Td>
