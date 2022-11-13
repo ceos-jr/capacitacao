@@ -5,13 +5,13 @@ import {
   Skeleton,
   SkeletonText,
   Button,
+  useToast,
 } from "@chakra-ui/react";
 import DashboardLayout from "@components/Layout/DashboardLayout";
 import LessonsList from "@components/modules/LessonsList";
 import { trpc } from "@utils/trpc";
 import Head from "next/head";
 import { useRouter } from "next/router";
-import { type UserModuleProgress } from "@prisma/client";
 
 const UniqueModule = () => {
   const moduleId = useRouter().query.moduleId as string;
@@ -21,41 +21,52 @@ const UniqueModule = () => {
   const { data: userRel } = trpc.module.getUserModStats.useQuery({ moduleId });
   const utils = trpc.useContext();
 
+  const toast = useToast();
   const subsToModule = trpc.module.subsToModule.useMutation({
-    async onMutate() {
-      const dummyUser: UserModuleProgress = {
-        userId: "123123",
-        moduleId: moduleId,
-        completed: false,
-        startedAt: new Date(),
-        lastTimeSeen: new Date(),
-        completedAt: null,
-      };
-      await utils.module.getUserModStats.cancel();
-      const prevData = utils.module.getUserModStats.getData();
-      utils.module.getUserModStats.setData(dummyUser);
-      return { prevData };
+    onError(err) {
+      toast({
+        title: "Não foi possível se inscrever no módulo",
+        description: `Erro: ${err.message}`,
+        status: "error",
+        duration: 4000,
+        isClosable: true,
+      });
     },
-    onError(err, newPost, ctx) {
-      utils.module.getUserModStats.setData(ctx?.prevData);
-    },
-    onSettled() {
-      utils.module.getUserModStats.invalidate();
+    onSuccess() {
+      toast({
+        title: "Você foi inscrito com sucesso no módulo",
+        status: "success",
+        duration: 2000,
+        isClosable: true,
+      });
+      utils.module.getUserModStats.refetch({ moduleId });
     },
   });
 
   const desubToModule = trpc.module.desubToModule.useMutation({
     async onMutate() {
-      await utils.module.getUserModStats.cancel();
-      const prevData = utils.module.getUserModStats.getData();
-      utils.module.getUserModStats.setData(null);
+      await utils.module.getUserModStats.cancel({ moduleId });
+      const prevData = utils.module.getUserModStats.getData({ moduleId });
+      utils.module.getUserModStats.setData(null, { moduleId });
       return { prevData };
     },
-    onError(err, newPost, ctx) {
+    onError(err, _, ctx) {
       utils.module.getUserModStats.setData(ctx?.prevData);
+      toast({
+        title: "Não foi possível se desincrever do módulo",
+        description: `Erro: ${err.message}`,
+        status: "error",
+        duration: 4000,
+        isClosable: true,
+      });
     },
-    onSettled() {
-      utils.module.getUserModStats.invalidate();
+    onSuccess() {
+      toast({
+        title: "Você foi desenscrevido com sucesso no módulo",
+        status: "success",
+        duration: 2000,
+        isClosable: true,
+      });
     },
   });
 

@@ -39,13 +39,23 @@ export const moduleRouter = router({
             moduleId: input.moduleId,
           },
         },
+        include: {
+          lessonProg: {
+            select: { tasksProg: { select: { completed: true } } },
+          },
+        },
       });
     }),
   subsToModule: protectedProcedure
     .input(
       z.object({
         id: z.string(),
-        lessons: z.array(z.object({ id: z.string() })),
+        lessons: z.array(
+          z.object({
+            id: z.string(),
+            tasks: z.array(z.object({ id: z.string() })),
+          })
+        ),
       })
     )
     .mutation(({ ctx, input }) => {
@@ -54,9 +64,14 @@ export const moduleRouter = router({
           userId: ctx.session.user.id,
           moduleId: input.id,
           lessonProg: {
-            createMany: {
-              data: input.lessons.map((lesson) => ({ lessonId: lesson.id })),
-            },
+            create: input.lessons.map((less) => ({
+              lessonId: less.id,
+              tasksProg: {
+                create: less.tasks.map((task) => ({
+                  taskId: task.id,
+                })),
+              },
+            })),
           },
         },
       });
