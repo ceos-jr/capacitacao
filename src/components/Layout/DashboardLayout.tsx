@@ -25,7 +25,7 @@ import {
   FiBell,
   FiChevronDown,
 } from "react-icons/fi";
-import { FaUserCircle } from "react-icons/fa";
+import { FaHardHat, FaUserCircle } from "react-icons/fa";
 import { AiOutlineBook } from "react-icons/ai";
 import type { IconType } from "react-icons";
 import NextLink from "next/link";
@@ -49,7 +49,8 @@ interface LinkItemProps {
 const LinkItems: Array<LinkItemProps> = [
   { name: "Home", icon: FiHome, link: "" },
   { name: "Modulos", icon: AiOutlineBook, link: "modules" },
-  // { name: "Settings", icon: FiSettings, link: "settings" },
+  { name: "Admin", icon: FaHardHat, link: "admin" },
+  { name: "Settings", icon: FiSettings, link: "settings" },
 ];
 
 const DashboardLayout = ({ children }: { children: React.ReactNode }) => {
@@ -145,7 +146,7 @@ const NavItem = ({ icon, name, ...rest }: NavItemProps) => {
         />
       )}
 
-      <p className="pt-1">{name}</p>
+      {name}
     </Flex>
   );
 };

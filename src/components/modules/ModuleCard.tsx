@@ -1,6 +1,8 @@
 import { Heading, Box, LinkBox, LinkOverlay, Text } from "@chakra-ui/react";
 import moment from "moment";
 import NextLink from "next/link";
+import "moment/locale/pt-br";
+moment.locale("pt-br");
 
 type ModuleCardProps = {
   id: string;

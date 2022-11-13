@@ -7,6 +7,8 @@ import { useSession } from "@utils/useSession";
 
 import DashboardLayout from "@components/Layout/DashboardLayout";
 import { getServerAuthSession } from "src/server/common/get-server-auth-session";
+import Stats from "@components/home/Stats";
+import MostRecentModules from "@components/home/MostRecentModules";
 
 const Home = () => {
   return (
@@ -15,7 +17,9 @@ const Home = () => {
         <title>Dashboard • CEOS</title>
         <meta name="description" content="CEOS Capacitacao" />
       </Head>
-      <main className="container flex flex-col justify-center items-center p-4 mx-auto min-h-screen">
+      <main className="flex flex-col gap-4 p-4 h-max">
+        <Stats />
+        <MostRecentModules />
         <AuthShowcase />
         <ChangeRoleFooter />
       </main>

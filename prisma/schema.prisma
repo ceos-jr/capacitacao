@@ -55,25 +55,31 @@ model User {
 }
 
 model UserModuleProgress {
-  userId     String
-  user       User                 @relation(fields: [userId], references: [id], onDelete: Cascade)
-  moduleId   String
-  module     Module               @relation(fields: [moduleId], references: [id], onDelete: Cascade)
-  lessonProg UserLessonProgress[]
-  completed  Boolean              @default(false)
+  userId       String
+  user         User                 @relation(fields: [userId], references: [id], onDelete: Cascade)
+  moduleId     String
+  module       Module               @relation(fields: [moduleId], references: [id], onDelete: Cascade)
+  lessonProg   UserLessonProgress[]
+  startedAt    DateTime             @default(now())
+  lastTimeSeen DateTime             @default(now())
+  completed    Boolean              @default(false)
+  completedAt  DateTime?
 
   @@unique([userId, moduleId])
 }
 
 model UserLessonProgress {
-  userId      String
-  moduleId    String
-  lessonId    String
-  user        User               @relation(fields: [userId], references: [id], onDelete: Cascade)
-  lesson      Lesson             @relation(fields: [lessonId], references: [id], onDelete: Cascade)
-  userModProg UserModuleProgress @relation(fields: [userId, moduleId], references: [userId, moduleId], onDelete: Cascade)
-  completed   Boolean            @default(false)
-  tasksProg   UserTaskProgress[]
+  userId       String
+  moduleId     String
+  lessonId     String
+  user         User               @relation(fields: [userId], references: [id], onDelete: Cascade)
+  lesson       Lesson             @relation(fields: [lessonId], references: [id], onDelete: Cascade)
+  userModProg  UserModuleProgress @relation(fields: [userId, moduleId], references: [userId, moduleId], onDelete: Cascade)
+  startedAt    DateTime           @default(now())
+  lastTimeSeen DateTime           @default(now())
+  completed    Boolean            @default(false)
+  completedAt  DateTime?
+  tasksProg    UserTaskProgress[]
 
   @@unique([userId, lessonId])
 }
@@ -85,7 +91,9 @@ model UserTaskProgress {
   task         Task               @relation(fields: [taskId], references: [id], onDelete: Cascade)
   lessonId     String
   userLessProg UserLessonProgress @relation(fields: [userId, lessonId], references: [userId, lessonId], onDelete: Cascade)
+  startedAt    DateTime           @default(now())
   completed    Boolean            @default(false)
+  completedAt  DateTime?
 
   @@unique([userId, taskId])
 }
@@ -176,6 +184,8 @@ model ModSuggestion {
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   moduleId  String
   module    Module   @relation(fields: [moduleId], references: [id], onDelete: Cascade)
+  text      String   @db.Text
+  readed    Boolean  @default(false)
 
   @@map("mod_suggestions")
 }
@@ -187,6 +197,8 @@ model LesSuggestion {
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   lessonId  String
   lesson    Lesson   @relation(fields: [lessonId], references: [id], onDelete: Cascade)
+  text      String   @db.Text
+  readed    Boolean  @default(false)
 
   @@map("les_suggestions")
 }
