@@ -48,6 +48,34 @@ const lessons: Prisma.LessonCreateManyInput[] = [
   },
 ];
 
+const modSugg = [
+  {
+    userId: mU.MEMBER.id as string,
+    moduleId: modules[0]?.id as string,
+    text: "I expect this on this module",
+  },
+  {
+    userId: mU.MEMBER.id as string,
+    moduleId: modules[0]?.id as string,
+    text: "This was already readed",
+    readed: true,
+  },
+];
+
+const lesSuggestions = [
+  {
+    userId: mU.MEMBER.id as string,
+    lessonId: lessons[0]?.id as string,
+    text: "I expect this on this module",
+  },
+  {
+    userId: mU.MEMBER.id as string,
+    lessonId: lessons[0]?.id as string,
+    text: "This was already readed",
+    readed: true,
+  },
+];
+
 async function main() {
   console.log(`Start seeding ...`);
   console.log("creating users");
@@ -75,6 +103,10 @@ async function main() {
   await prisma.module.createMany({ data: modules });
   console.log("creating lessons");
   await prisma.lesson.createMany({ data: lessons });
+  console.log("creating modules suggestions");
+  await prisma.modSuggestion.createMany({ data: modSugg });
+  console.log("creating lessons suggestions");
+  await prisma.lesSuggestion.createMany({ data: lesSuggestions });
 
   console.log(`Seeding finished.`);
 }

@@ -35,4 +35,12 @@ export const lessonRouter = router({
       },
     });
   }),
+  updSttsOnLessSugg: adminProcedure
+    .input(z.object({ id: z.string(), readed: z.boolean() }))
+    .mutation(({ ctx, input }) => {
+      return ctx.prisma.lesSuggestion.update({
+        where: { id: input.id },
+        data: { readed: input.readed },
+      });
+    }),
 });

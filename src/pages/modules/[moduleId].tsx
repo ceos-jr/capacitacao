@@ -4,7 +4,6 @@ import {
   Stack,
   Skeleton,
   SkeletonText,
-  HStack,
   Button,
 } from "@chakra-ui/react";
 import DashboardLayout from "@components/Layout/DashboardLayout";
@@ -16,7 +15,7 @@ import { type UserModuleProgress } from "@prisma/client";
 
 const UniqueModule = () => {
   const moduleId = useRouter().query.moduleId as string;
-  const { data: module } = trpc.module.getUnique.useQuery({
+  const { data: moduleData } = trpc.module.getUnique.useQuery({
     moduleId,
   });
   const { data: userRel } = trpc.module.getUserModStats.useQuery({ moduleId });
@@ -28,6 +27,9 @@ const UniqueModule = () => {
         userId: "123123",
         moduleId: moduleId,
         completed: false,
+        startedAt: new Date(),
+        lastTimeSeen: new Date(),
+        completedAt: null,
       };
       await utils.module.getUserModStats.cancel();
       const prevData = utils.module.getUserModStats.getData();
@@ -60,40 +62,38 @@ const UniqueModule = () => {
   return (
     <>
       <Head>
-        <title>{module?.name} • CEOS</title>
+        <title>{moduleData?.name} • CEOS</title>
         <meta name="description" content="CEOS Capacitacao" />
       </Head>
       <main className="container flex flex-col p-4 mx-auto h-max">
-        {!module ? (
+        {!moduleData ? (
           <UniqueModuleSkeleton />
         ) : (
           <>
-            <HStack justifyContent="space-between">
+            <div className="flex flex-col gap-4 justify-between sm:flex-row sm:items-center">
               <Heading as="h1" size="3xl">
-                {`Modulo de ${module.name}`}
+                {`Modulo de ${moduleData.name}`}
               </Heading>
-              <div className="hidden sm:inline-flex">
-                {!userRel ? (
-                  <Button
-                    colorScheme="green"
-                    onClick={() => subsToModule.mutate(module)}
-                  >
-                    Inscrever
-                  </Button>
-                ) : (
-                  <Button
-                    colorScheme="red"
-                    onClick={() =>
-                      desubToModule.mutate({ moduleId: module.id })
-                    }
-                  >
-                    Desinscrever
-                  </Button>
-                )}
-              </div>
-            </HStack>
-            <Text className="mb-4">{module?.description}</Text>
-            <LessonsList lessons={module.lessons} userModRel={userRel} />
+              {!userRel ? (
+                <Button
+                  colorScheme="green"
+                  onClick={() => subsToModule.mutate(moduleData)}
+                >
+                  Inscrever
+                </Button>
+              ) : (
+                <Button
+                  colorScheme="red"
+                  onClick={() =>
+                    desubToModule.mutate({ moduleId: moduleData.id })
+                  }
+                >
+                  Desinscrever
+                </Button>
+              )}
+            </div>
+            <Text className="my-4">{moduleData?.description}</Text>
+            <LessonsList lessons={moduleData.lessons} userModRel={userRel} />
           </>
         )}
       </main>

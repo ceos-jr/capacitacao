@@ -92,4 +92,12 @@ export const moduleRouter = router({
         },
       });
     }),
+  updSttsOnModSugg: adminProcedure
+    .input(z.object({ id: z.string(), readed: z.boolean() }))
+    .mutation(({ ctx, input }) => {
+      return ctx.prisma.modSuggestion.update({
+        where: { id: input.id },
+        data: { readed: input.readed },
+      });
+    }),
 });
