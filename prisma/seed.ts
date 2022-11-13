@@ -8,16 +8,6 @@ const modules: Prisma.ModuleCreateInput[] = [
     name: "css",
     description: "Seja bem vindos ao módulo CSS",
   },
-  {
-    id: "cla8sqsem000108l01awh980f",
-    name: "javascript",
-    description: "Seja bem vindos ao módulo javascript",
-  },
-  {
-    id: "cla8sr63h000208l04vnz5mzk",
-    name: "DOM",
-    description: "Seja bem vindos ao módulo de DOM",
-  },
 ];
 
 const lessons: Prisma.LessonCreateManyInput[] = [

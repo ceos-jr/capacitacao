@@ -29,7 +29,7 @@ const Lesson = () => {
               {lesson.data?.name}
             </Heading>
             <Text as="i">
-              Last update {moment(lesson.data?.updatedAt).fromNow()}
+              Ultima atualização {moment(lesson.data?.updatedAt).fromNow()}
             </Text>
             <ReactMarkdown
               remarkPlugins={[remarkGfm]}

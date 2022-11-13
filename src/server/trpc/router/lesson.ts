@@ -12,19 +12,31 @@ export const lessonRouter = router({
         include: { links: true, videos: true, projects: true },
       });
     }),
+  getLessTasks: publicProcedure
+    .input(z.object({ lessonId: z.string() }))
+    .query(({ ctx, input }) => {
+      return ctx.prisma.task.findMany({
+        where: { lessonId: input.lessonId },
+      });
+    }),
   updateLessonWUtils: adminProcedure
     .input(LessonWUtils)
     .mutation(({ input, ctx }) => {
-      return ctx.prisma.lesson.update({
-        where: { id: input.id },
-        data: {
-          name: input.name,
-          richText: input.richText,
-          videos: { createMany: { data: input.videos } },
-          links: { createMany: { data: input.links } },
-          projects: { createMany: { data: input.projects } },
-        },
-      });
+      return ctx.prisma.$transaction([
+        ctx.prisma.video.deleteMany({ where: { lessonId: input.id } }),
+        ctx.prisma.link.deleteMany({ where: { lessonId: input.id } }),
+        ctx.prisma.project.deleteMany({ where: { lessonId: input.id } }),
+        ctx.prisma.lesson.update({
+          where: { id: input.id },
+          data: {
+            name: input.name,
+            richText: input.richText,
+            videos: { createMany: { data: input.videos } },
+            links: { createMany: { data: input.links } },
+            projects: { createMany: { data: input.projects } },
+          },
+        }),
+      ]);
     }),
   updateVideo: adminProcedure.input(LessonWUtils).query(({ input, ctx }) => {
     return ctx.prisma.lesson.update({
