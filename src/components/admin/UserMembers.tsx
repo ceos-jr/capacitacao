@@ -1,5 +1,10 @@
 import {
   Heading,
+  IconButton,
+  Menu,
+  MenuButton,
+  MenuItem,
+  MenuList,
   Table,
   TableContainer,
   Tbody,
@@ -8,17 +13,23 @@ import {
   Th,
   Thead,
   Tr,
+  Skeleton,
 } from "@chakra-ui/react";
 import { trpc } from "@utils/trpc";
 import { FaUserCircle } from "react-icons/fa";
 import NextImage from "next/image";
+import { BsThreeDots, BsTrash } from "react-icons/bs";
+import React from "react";
 
 const UserMembers = () => {
   const allMembers = trpc.admin.getAllMembers.useQuery();
   return (
     <>
       {!allMembers.data ? (
-        "loading kkk"
+        <>
+          <Skeleton height="30px" />
+          <Skeleton height="40" />
+        </>
       ) : (
         <>
           <Heading>Membros da CEOS</Heading>
@@ -36,6 +47,7 @@ const UserMembers = () => {
                     <Th>Cargo</Th>
                     <Th isNumeric>Módulos em progresso</Th>
                     <Th isNumeric>Módulos concluídos</Th>
+                    <Th isNumeric>Ações</Th>
                   </Tr>
                 </Thead>
                 <Tbody>
@@ -71,6 +83,14 @@ const UserMembers = () => {
                           mem.modulesProgress.filter((mod) => mod.completed)
                             .length
                         }
+                      </Td>
+                      <Td className="flex justify-end">
+                        <Menu>
+                          <MenuButton as={IconButton} icon={<BsThreeDots />} />
+                          <MenuList>
+                            <MenuItem icon={<BsTrash />}>Delete User</MenuItem>
+                          </MenuList>
+                        </Menu>
                       </Td>
                     </Tr>
                   ))}

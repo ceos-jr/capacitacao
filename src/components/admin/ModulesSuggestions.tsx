@@ -15,6 +15,7 @@ import {
   Thead,
   Highlight,
   Tr,
+  Skeleton,
 } from "@chakra-ui/react";
 import { trpc } from "@utils/trpc";
 import NextLink from "next/link";
@@ -38,7 +39,10 @@ const ModSuggTabAdmin = () => {
   return (
     <>
       {!modSuggestions.data ? (
-        "loading"
+        <>
+          <Skeleton height="30px" />
+          <Skeleton height="40" />
+        </>
       ) : (
         <>
           <Heading>Sugestões para os módulos</Heading>
