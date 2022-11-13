@@ -1,6 +1,7 @@
 import AdminStats from "@components/admin/AdminStats";
 import LessonSuggestions from "@components/admin/LessonSuggestions";
 import ModulesSuggestions from "@components/admin/ModulesSuggestions";
+import UserMembers from "@components/admin/UserMembers";
 import DashboardLayout from "@components/Layout/DashboardLayout";
 import { Roles } from "@utils/constants";
 import { type GetServerSideProps } from "next";
@@ -16,6 +17,7 @@ const Admin = () => {
       </Head>
       <main className="flex flex-col gap-4 p-4 h-max">
         <AdminStats />
+        <UserMembers />
         <ModulesSuggestions />
         <LessonSuggestions />
       </main>
@@ -31,9 +33,6 @@ Admin.getLayout = function getLayout(page: React.ReactElement) {
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
   const session = await getServerAuthSession(context);
-
-  console.log("session", session);
-
   if (!session) {
     return {
       redirect: {

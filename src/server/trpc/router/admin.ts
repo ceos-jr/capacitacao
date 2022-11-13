@@ -6,6 +6,11 @@ export const adminRouter = router({
   getUserCount: adminProcedure.query(({ ctx }) => {
     return ctx.prisma.user.count({});
   }),
+  getAllMembers: adminProcedure.query(({ ctx }) => {
+    return ctx.prisma.user.findMany({
+      include: { modulesProgress: { select: { completed: true } } },
+    });
+  }),
   getModCount: adminProcedure.query(({ ctx }) => {
     return ctx.prisma.module.count({});
   }),
