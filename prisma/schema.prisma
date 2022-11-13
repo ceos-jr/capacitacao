@@ -45,40 +45,55 @@ model User {
   image           String?
   accounts        Account[]
   sessions        Session[]
-  role            Role @default(STUDENT)
+  role            Role                 @default(MEMBER)
   achievements    Achievement[]
   modulesProgress UserModuleProgress[]
   lessonsProgress UserLessonProgress[]
   tasksProgress   UserTaskProgress[]
-  suggestions     Suggestion[]
+  modSuggestions  ModSuggestion[]
+  lesSuggestions  LesSuggestion[]
 }
 
 model UserModuleProgress {
-  userId    String
-  user      User    @relation(fields: [userId], references: [id], onDelete: Cascade)
-  moduleId  String
-  module    Module  @relation(fields: [moduleId], references: [id], onDelete: Cascade)
-  completed Boolean @default(false)
+  userId       String
+  user         User                 @relation(fields: [userId], references: [id], onDelete: Cascade)
+  moduleId     String
+  module       Module               @relation(fields: [moduleId], references: [id], onDelete: Cascade)
+  lessonProg   UserLessonProgress[]
+  startedAt    DateTime             @default(now())
+  lastTimeSeen DateTime             @default(now())
+  completed    Boolean              @default(false)
+  completedAt  DateTime?
 
   @@unique([userId, moduleId])
 }
 
 model UserLessonProgress {
-  userId    String
-  user      User    @relation(fields: [userId], references: [id], onDelete: Cascade)
-  lessonId  String
-  lesson    Lesson  @relation(fields: [lessonId], references: [id], onDelete: Cascade)
-  completed Boolean @default(false)
+  userId       String
+  moduleId     String
+  lessonId     String
+  user         User               @relation(fields: [userId], references: [id], onDelete: Cascade)
+  lesson       Lesson             @relation(fields: [lessonId], references: [id], onDelete: Cascade)
+  userModProg  UserModuleProgress @relation(fields: [userId, moduleId], references: [userId, moduleId], onDelete: Cascade)
+  startedAt    DateTime           @default(now())
+  lastTimeSeen DateTime           @default(now())
+  completed    Boolean            @default(false)
+  completedAt  DateTime?
+  tasksProg    UserTaskProgress[]
 
   @@unique([userId, lessonId])
 }
 
 model UserTaskProgress {
-  userId    String
-  user      User    @relation(fields: [userId], references: [id], onDelete: Cascade)
-  taskId    String
-  task      Task    @relation(fields: [taskId], references: [id], onDelete: Cascade)
-  completed Boolean @default(false)
+  userId       String
+  user         User               @relation(fields: [userId], references: [id], onDelete: Cascade)
+  taskId       String
+  task         Task               @relation(fields: [taskId], references: [id], onDelete: Cascade)
+  lessonId     String
+  userLessProg UserLessonProgress @relation(fields: [userId, lessonId], references: [userId, lessonId], onDelete: Cascade)
+  startedAt    DateTime           @default(now())
+  completed    Boolean            @default(false)
+  completedAt  DateTime?
 
   @@unique([userId, taskId])
 }
@@ -94,10 +109,11 @@ model VerificationToken {
 model Module {
   id          String               @id @default(cuid())
   name        String
+  description String?              @db.Text
   updatedAt   DateTime             @default(now())
   lessons     Lesson[]
   users       UserModuleProgress[]
-  suggestions Suggestion[]
+  suggestions ModSuggestion[]
 }
 
 model Achievement {
@@ -110,35 +126,86 @@ model Achievement {
 }
 
 model Lesson {
-  id        String               @id @default(cuid())
-  name      String
-  createdAt DateTime             @default(now())
-  users     UserLessonProgress[]
-  moduleId  String
-  module    Module               @relation(fields: [moduleId], references: [id], onDelete: Cascade)
-  tasks     Task[]
+  id          String               @id @default(cuid())
+  index       Int
+  name        String
+  createdAt   DateTime             @default(now())
+  updatedAt   DateTime             @updatedAt
+  richText    String               @db.Text
+  users       UserLessonProgress[]
+  moduleId    String
+  module      Module               @relation(fields: [moduleId], references: [id], onDelete: Cascade)
+  tasks       Task[]
+  videos      Video[]
+  links       Link[]
+  projects    Project[]
+  suggestions LesSuggestion[]
 }
 
 model Task {
   id        String             @id @default(cuid())
   name      String
+  richText String @db.Text
   createdAt DateTime           @default(now())
   lessonId  String
   lesson    Lesson             @relation(fields: [lessonId], references: [id], onDelete: Cascade)
   users     UserTaskProgress[]
 }
 
-model Suggestion {
+model Video {
+  id          String  @id @default(cuid())
+  name        String
+  url         String
+  description String?
+  lessonId    String
+  lesson      Lesson  @relation(fields: [lessonId], references: [id], onDelete: Cascade)
+}
+
+model Project {
+  id       String @id @default(cuid())
+  name     String
+  richText String
+  lessonId String
+  lesson   Lesson @relation(fields: [lessonId], references: [id], onDelete: Cascade)
+}
+
+model Link {
+  id          String  @id @default(cuid())
+  name        String
+  url         String
+  description String?
+  lessonId    String
+  lesson      Lesson  @relation(fields: [lessonId], references: [id], onDelete: Cascade)
+}
+
+model ModSuggestion {
   id        String   @id @default(cuid())
   createdAt DateTime @default(now())
   userId    String
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   moduleId  String
   module    Module   @relation(fields: [moduleId], references: [id], onDelete: Cascade)
+  text      String   @db.Text
+  readed    Boolean  @default(false)
+
+  @@map("mod_suggestions")
+}
+
+model LesSuggestion {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  lessonId  String
+  lesson    Lesson   @relation(fields: [lessonId], references: [id], onDelete: Cascade)
+  text      String   @db.Text
+  readed    Boolean  @default(false)
+
+  @@map("les_suggestions")
 }
 
 enum Role {
-  TEACHER
-  STUDENT
+  ADMIN
+  MEMBER
   UNAUTHENTICATED
 }

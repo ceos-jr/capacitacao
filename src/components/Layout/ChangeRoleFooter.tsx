@@ -19,20 +19,20 @@ const becomeRole = (role: string) => {
 export const ChangeRoleFooter = () => {
   return (
     <>
-      {process.env.NEXT_PUBLIC_MOCK_NEXT_AUTH && (
+      {process.env.NEXT_PUBLIC_MOCK_NEXT_AUTH === "true" && (
         <div className="bg-red-200">
           <div className="container flex gap-2 items-center mx-auto text-black">
             DEVELOPMENT ROLE SWITCHER:
             <button
               onClick={() => {
-                becomeRole(Roles.Student);
+                becomeRole(Roles.Member);
               }}
             >
               student
             </button>
             <button
               onClick={() => {
-                becomeRole(Roles.Teacher);
+                becomeRole(Roles.Admin);
               }}
             >
               teacher

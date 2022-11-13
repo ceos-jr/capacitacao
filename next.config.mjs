@@ -13,5 +13,9 @@ const config = {
     locales: ["en"],
     defaultLocale: "en",
   },
+  images: {
+    domains: ["img.youtube.com", "avatars.githubusercontent.com"],
+  },
 };
+
 export default config;

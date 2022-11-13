@@ -9,8 +9,8 @@ export const getMockRole = async () => {
     jsonDirectory + "/mock-role.txt",
     "utf8"
   );
-  if (fileContents === Roles.Teacher) return Roles.Teacher;
-  else if (fileContents === Roles.Student) return Roles.Student;
+  if (fileContents === Roles.Admin) return Roles.Admin;
+  else if (fileContents === Roles.Member) return Roles.Member;
   else return null;
 };
 

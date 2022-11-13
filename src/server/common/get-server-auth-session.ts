@@ -13,7 +13,7 @@ export const getServerAuthSession = async (ctx: {
   req: GetServerSidePropsContext["req"];
   res: GetServerSidePropsContext["res"];
 }) => {
-  if (process.env.NEXT_PUBLIC_MOCK_NEXT_AUTH) {
+  if (process.env.NEXT_PUBLIC_MOCK_NEXT_AUTH === "true") {
     const role = await getMockRole();
     if (role !== null) {
       return { user: getMockUser(role), expires: "77777" };

@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { getMockUser } from "./mock-user";
 
 export const useSession = () => {
-  if (process.env.NEXT_PUBLIC_MOCK_NEXT_AUTH) {
+  if (process.env.NEXT_PUBLIC_MOCK_NEXT_AUTH === "true") {
     const [mockRole, setMockRole] = useState();
 
     useEffect(() => {
