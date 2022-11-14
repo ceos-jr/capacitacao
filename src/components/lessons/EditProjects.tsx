@@ -6,37 +6,49 @@ import {
   Heading,
   Icon,
   Input,
-  Textarea,
 } from "@chakra-ui/react";
+import AutoResizeTextarea from "@components/Layout/AutoResizeTextarea";
 import {
   type FieldErrorsImpl,
   useFieldArray,
   type UseFormRegister,
   type Control,
   useWatch,
+  type UseFormResetField,
 } from "react-hook-form";
 import { AiFillDelete, AiOutlineArrowUp, AiOutlinePlus } from "react-icons/ai";
+import { BiReset } from "react-icons/bi";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import { type FormSchemaType } from "src/pages/lessons/[lessonId]/edit";
+
+interface EditProjectsProps {
+  register: UseFormRegister<FormSchemaType>;
+  errors: FieldErrorsImpl<FormSchemaType>;
+  control: Control<FormSchemaType>;
+  resetField: UseFormResetField<FormSchemaType>;
+}
 
 const EditProjects = ({
   register,
   control,
   errors,
-}: {
-  register: UseFormRegister<FormSchemaType>;
-  errors: FieldErrorsImpl<FormSchemaType>;
-  control: Control<FormSchemaType>;
-}) => {
+  resetField,
+}: EditProjectsProps) => {
   const { fields, append, remove, move } = useFieldArray({
     control,
     name: "projects",
   });
   return (
     <>
-      <div className="flex gap-x-4 justify-between">
-        <Heading>Projetos</Heading>
+      <div className="flex flex-col gap-4 justify-between sm:flex-row sm:items-center">
+        <div className="flex gap-2">
+          <Heading>Projetos</Heading>
+          <BiReset
+            className="flex-shrink-0 w-6 h-6 transition-colors cursor-pointer hover:text-secondary"
+            onClick={() => resetField("projects")}
+          />
+        </div>
         <Button
           leftIcon={<AiOutlinePlus />}
           colorScheme="green"
@@ -61,6 +73,7 @@ const EditProjects = ({
                   isInvalid={
                     !!errors?.projects && !!errors.projects[index]?.name
                   }
+                  id={`projects_${index}_name`}
                 >
                   <FormLabel>Nome do project</FormLabel>
                   <Input
@@ -79,18 +92,19 @@ const EditProjects = ({
                   isInvalid={
                     !!errors?.projects && !!errors.projects[index]?.richText
                   }
+                  id={`projects_${index}_rich_text`}
                 >
                   <FormLabel className="mt-4">
                     Conteúdo do projeto (em Markdown)
                   </FormLabel>
                   {errors.projects && errors.projects[index]?.richText && (
-                    <FormErrorMessage>
+                    <FormErrorMessage className="mb-4">
                       {errors.projects[index]?.richText?.message}
                     </FormErrorMessage>
                   )}
-                  <div className="grid grid-cols-2 gap-4">
-                    <Textarea
-                      placeholder="#hello meu men"
+                  <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                    <AutoResizeTextarea
+                      placeholder="# Titulo do projeto"
                       {...register(`projects.${index}.richText` as const)}
                       bgColor="white"
                     />
