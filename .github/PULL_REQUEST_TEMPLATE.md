@@ -2,11 +2,11 @@
 
 Por favor, inclua um resumo das mudancas relacionadas com as issues. Também inclua contexto relacinado ao problema.
 
-Conserta # (linke sua issue aqui)
+Closes # (linke sua issue aqui)
 
 ## Tipo de mudança
 
-Por favor delete as mudanças que não forem relevantesj
+Por favor delete as mudanças que não forem relevantes
 
 - [ ] Bug fix (mudança não críticaque conserta uma issue)
 - [ ] New feature (mudança não crítica que adiciona uma nova feature)
