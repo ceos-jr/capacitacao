@@ -14,8 +14,8 @@ export const moduleRouter = router({
   }),
   getUnique: publicProcedure
     .input(z.object({ moduleId: z.string() }))
-    .query(({ input }) => {
-      return prisma?.module.findUnique({
+    .query(({ ctx, input }) => {
+      return ctx.prisma.module.findUnique({
         where: { id: input.moduleId },
         include: {
           lessons: {
