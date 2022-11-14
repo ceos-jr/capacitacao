@@ -31,6 +31,7 @@ import NextImage from "next/image";
 import { BsThreeDots, BsTrash } from "react-icons/bs";
 import React, { useState } from "react";
 import { Roles } from "@utils/constants";
+import { AiOutlineEye } from "react-icons/ai";
 
 const UserMembers = () => {
   const toast = useToast();
@@ -183,6 +184,14 @@ const UserMembers = () => {
                                 Delete User
                               </MenuItem>
                             )}
+                            <MenuItem
+                              icon={<AiOutlineEye />}
+                              onClick={() => {
+                                console.log("change me daddy");
+                              }}
+                            >
+                              Ver usuário
+                            </MenuItem>
                           </MenuList>
                         </Menu>
                       </Td>
