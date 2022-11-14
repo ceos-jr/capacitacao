@@ -28,8 +28,6 @@ Home.getLayout = function getLayout(page: React.ReactElement) {
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
   const session = await getServerAuthSession(context);
-  console.log("session", session);
-
   if (!session) {
     return {
       redirect: {
