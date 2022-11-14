@@ -5,6 +5,7 @@ import { extendTheme } from "@chakra-ui/react";
 import { trpc } from "../utils/trpc";
 import "../styles/globals.css";
 import { type NextPage } from "next";
+import NextNProgress from "nextjs-progressbar";
 
 const colors = {
   primary: "#2196f2",
@@ -32,6 +33,7 @@ function MyApp({
   const layout = getLayout(<Component {...pageProps} />);
   return (
     <SessionProvider session={session}>
+      <NextNProgress color={colors.primary} />
       <ChakraProvider theme={theme}>{layout}</ChakraProvider>
     </SessionProvider>
   );

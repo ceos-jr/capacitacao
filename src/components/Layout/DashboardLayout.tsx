@@ -18,13 +18,7 @@ import {
   MenuItem,
   MenuList,
 } from "@chakra-ui/react";
-import {
-  FiHome,
-  FiSettings,
-  FiMenu,
-  FiBell,
-  FiChevronDown,
-} from "react-icons/fi";
+import { FiHome, FiMenu, FiBell, FiChevronDown } from "react-icons/fi";
 import { FaHardHat, FaUserCircle } from "react-icons/fa";
 import { AiOutlineBook } from "react-icons/ai";
 import type { IconType } from "react-icons";
@@ -35,6 +29,7 @@ import Logo from "./Logo";
 import LogoExtended from "./LogoExtended";
 import { signOut } from "next-auth/react";
 import { Inter } from "@next/font/google";
+import { Roles } from "@utils/constants";
 
 const inter = Inter({
   variable: "--font-inter",
@@ -49,8 +44,6 @@ interface LinkItemProps {
 const LinkItems: Array<LinkItemProps> = [
   { name: "Home", icon: FiHome, link: "" },
   { name: "Modulos", icon: AiOutlineBook, link: "modules" },
-  { name: "Admin", icon: FaHardHat, link: "admin" },
-  { name: "Settings", icon: FiSettings, link: "settings" },
 ];
 
 const DashboardLayout = ({ children }: { children: React.ReactNode }) => {
@@ -92,6 +85,7 @@ interface SidebarProps extends BoxProps {
   onClose: () => void;
 }
 const SidebarContent = ({ onClose, ...rest }: SidebarProps) => {
+  const { data: session } = useSession();
   return (
     <Box
       transition="3s ease"
@@ -109,9 +103,14 @@ const SidebarContent = ({ onClose, ...rest }: SidebarProps) => {
       </Flex>
       {LinkItems.map((link, index) => (
         <NextLink key={index} href={`/${link.link}`}>
-          <NavItem key={link.name} icon={link.icon} name={link.name} />
+          <NavItem icon={link.icon} name={link.name} />
         </NextLink>
       ))}
+      {session?.user?.role === Roles.Admin && (
+        <NextLink href="/admin">
+          <NavItem icon={FaHardHat} name="Admin" />
+        </NextLink>
+      )}
     </Box>
   );
 };
@@ -220,13 +219,13 @@ const MobileNav = ({ onOpen, ...rest }: MobileProps) => {
               </HStack>
             </MenuButton>
             <MenuList bg="white" borderColor="gray.300">
-              <MenuItem _focus={{ bg: "primary", textColor: "white" }}>
-                Profile
-              </MenuItem>
-              <MenuItem _focus={{ bg: "primary", textColor: "white" }}>
-                Settings
-              </MenuItem>
-              <MenuDivider />
+              {/* <MenuItem _focus={{ bg: "primary", textColor: "white" }}> */}
+              {/*   Profile */}
+              {/* </MenuItem> */}
+              {/* <MenuItem _focus={{ bg: "primary", textColor: "white" }}> */}
+              {/*   Settings */}
+              {/* </MenuItem> */}
+              {/* <MenuDivider /> */}
               <MenuItem
                 _focus={{ bg: "primary", textColor: "white" }}
                 onClick={() => signOut()}

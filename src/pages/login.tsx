@@ -4,6 +4,8 @@ import { AiFillGithub } from "react-icons/ai";
 import { Text } from "@chakra-ui/react";
 import Head from "next/head";
 import Logo from "@components/Layout/Logo";
+import { getServerAuthSession } from "src/server/common/get-server-auth-session";
+import { type GetServerSideProps } from "next";
 
 const Login = () => {
   return (
@@ -25,3 +27,17 @@ const Login = () => {
 };
 
 export default Login;
+
+export const getServerSideProps: GetServerSideProps = async (context) => {
+  const session = await getServerAuthSession(context);
+  if (session) {
+    return {
+      redirect: {
+        destination: "/",
+        permanent: false,
+      },
+    };
+  } else {
+    return { props: {} };
+  }
+};

@@ -12,11 +12,13 @@ import LessSuggestionModal from "@components/Layout/LessSuggestionModal";
 import ResourceTab from "@components/lessons/ResourceTab";
 import { trpc } from "@utils/trpc";
 import moment from "moment";
+import { GetServerSideProps } from "next";
 import Head from "next/head";
 import { useRouter } from "next/router";
 import { AiOutlineInbox } from "react-icons/ai";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
+import { getServerAuthSession } from "src/server/common/get-server-auth-session";
 
 const Lesson = () => {
   const lessonId = useRouter().query.lessonId as string;
@@ -87,4 +89,17 @@ const LessonSkeleton = () => {
       <Skeleton mb="20" height="56" />
     </Stack>
   );
+};
+
+export const getServerSideProps: GetServerSideProps = async (context) => {
+  const session = await getServerAuthSession(context);
+  //TODO: O cara pode ter uma sessao e acessar mesmo que nã esteja inscrito
+  if (!session) {
+    return {
+      redirect: {
+        destination: "/login",
+        permanent: false,
+      },
+    };
+  } else return { props: {} };
 };
