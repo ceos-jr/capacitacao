@@ -1,11 +1,12 @@
 import {
-  Box,
   Button,
   FormControl,
+  FormErrorMessage,
   FormLabel,
   Heading,
   Icon,
   Input,
+  useToast,
 } from "@chakra-ui/react";
 import DashboardLayout from "@components/Layout/DashboardLayout";
 import Head from "next/head";
@@ -22,7 +23,7 @@ import { trpc } from "@utils/trpc";
 import { useRouter } from "next/router";
 
 export const FormSchema = z.object({
-  name: z.string().min(1),
+  name: z.string().min(1, { message: "O nome do módulo é necessário" }),
   description: z.string(),
   lessons: z
     .array(
@@ -45,7 +46,8 @@ const CreateModule = () => {
     formState: { errors },
   } = useForm<FormSchemaType>({
     resolver: zodResolver(FormSchema),
-    mode: "onBlur",
+    defaultValues: { lessons: [{ name: "", richText: "", index: 0 }] },
+    mode: "all",
   });
 
   const { fields, append, remove, move } = useFieldArray({
@@ -53,8 +55,28 @@ const CreateModule = () => {
     control,
   });
 
-  const createModWLessons = trpc.module.createModWLessons.useMutation();
   const router = useRouter();
+  const toast = useToast();
+  const createModWLessons = trpc.module.createModWLessons.useMutation({
+    onError(err) {
+      toast({
+        title: "Não foi possível criar o módulo",
+        description: `Erro: ${err.message}`,
+        status: "error",
+        duration: 4000,
+        isClosable: true,
+      });
+    },
+    onSuccess() {
+      toast({
+        title: "O módulo foi criado com sucesso",
+        status: "success",
+        duration: 2000,
+        isClosable: true,
+      });
+      router.push("/modules");
+    },
+  });
 
   const onSubmit = async (data: FormSchemaType) => {
     data.lessons.forEach((_, index) => {
@@ -62,7 +84,6 @@ const CreateModule = () => {
       data.lessons[index]!.index = index + 1;
     });
     createModWLessons.mutate(data);
-    router.push("/modules");
   };
   return (
     <>
@@ -72,31 +93,27 @@ const CreateModule = () => {
       </Head>
       <main className="container flex flex-col p-4 mx-auto h-max">
         <form onSubmit={handleSubmit(onSubmit)}>
-          <FormControl className="flex flex-col gap-y-4 mx-auto max-w-4xl">
+          <div className="flex flex-col gap-y-4 mx-auto max-w-4xl">
             <Heading>Modulo</Heading>
-            <Box>
-              <FormLabel htmlFor="name">Nome do Modulo</FormLabel>
+            <FormControl id="name" isInvalid={!!errors.name} isRequired>
+              <FormLabel>Nome do Modulo</FormLabel>
               <Input
-                id="name"
-                type="name"
                 bgColor="white"
-                aria-invalid={errors.name ? true : false}
-                aria-errormessage="name-error"
                 placeholder="o melhor modulo do mundo"
                 {...register("name")}
               />
-              {errors.name && "O nome do módulo é necessário"}
-            </Box>
-            <Box>
-              <FormLabel htmlFor="description">Descrição do Modulo</FormLabel>
+              {errors.name && (
+                <FormErrorMessage>{errors.name.message}</FormErrorMessage>
+              )}
+            </FormControl>
+            <FormControl id="description">
+              <FormLabel>Descrição do Modulo</FormLabel>
               <Input
-                id="description"
-                type="name"
                 bgColor="white"
                 placeholder="uma descrição concisa e util"
                 {...register("description")}
               />
-            </Box>
+            </FormControl>
             <div className="flex gap-x-4 justify-between">
               <Heading>Tópicos</Heading>
               <Button
@@ -114,49 +131,57 @@ const CreateModule = () => {
                 Novo Tópico
               </Button>
             </div>
-            {errors.lessons && (
+            {errors.lessons?.message && (
               <div className="text-red-500">{errors.lessons.message}</div>
             )}
             {fields.map((field, index) => {
               return (
-                <div key={field.id}>
-                  <section className={"section"} key={field.id}>
-                    <FormLabel>Nome do tópico</FormLabel>
-                    <div className="flex gap-x-4 justify-between">
-                      <Input
-                        placeholder="nome"
-                        {...register(`lessons.${index}.name` as const)}
-                        bgColor="white"
-                      />
-                      <Button
-                        leftIcon={<AiFillDelete />}
-                        colorScheme="red"
-                        variant="solid"
-                        onClick={() => remove(index)}
-                      >
-                        Deletar
-                      </Button>
-                      <Icon
-                        as={AiOutlineArrowUp}
-                        w={6}
-                        h={6}
-                        className="transition-colors cursor-pointer hover:text-secondary"
-                        onClick={() => {
-                          move(index, index - 1);
-                        }}
-                      />
-                      <Icon
-                        as={AiOutlineArrowDown}
-                        w={6}
-                        h={6}
-                        className="transition-colors cursor-pointer hover:text-secondary"
-                        onClick={() => {
-                          move(index, index + 1);
-                        }}
-                      />
-                    </div>
-                  </section>
-                </div>
+                <FormControl
+                  key={field.id}
+                  id={`lessons_${index}_name`}
+                  isInvalid={!!errors.lessons && !!errors.lessons[index]}
+                  isRequired
+                >
+                  <FormLabel>Nome do tópico</FormLabel>
+                  <div className="flex gap-x-4 justify-between">
+                    <Input
+                      placeholder="nome"
+                      {...register(`lessons.${index}.name` as const)}
+                      bgColor="white"
+                    />
+                    <Button
+                      leftIcon={<AiFillDelete />}
+                      colorScheme="red"
+                      variant="solid"
+                      onClick={() => remove(index)}
+                    >
+                      Deletar
+                    </Button>
+                    <Icon
+                      as={AiOutlineArrowUp}
+                      w={6}
+                      h={6}
+                      className="transition-colors cursor-pointer hover:text-secondary"
+                      onClick={() => {
+                        move(index, index - 1);
+                      }}
+                    />
+                    <Icon
+                      as={AiOutlineArrowDown}
+                      w={6}
+                      h={6}
+                      className="transition-colors cursor-pointer hover:text-secondary"
+                      onClick={() => {
+                        move(index, index + 1);
+                      }}
+                    />
+                  </div>
+                  {errors.lessons && errors.lessons[index]?.name && (
+                    <FormErrorMessage>
+                      {errors.lessons[index]?.name?.message}
+                    </FormErrorMessage>
+                  )}
+                </FormControl>
               );
             })}
             <Button
@@ -167,7 +192,7 @@ const CreateModule = () => {
             >
               Criar Modulo
             </Button>
-          </FormControl>
+          </div>
         </form>
       </main>
     </>
