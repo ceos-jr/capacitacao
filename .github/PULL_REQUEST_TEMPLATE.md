@@ -1,12 +1,12 @@
 # Description
 
-Por favor, inclua um resumo das mudancas relacionadas com as issues. Também inclua contexto relacinado ao problema.
+<!-- Por favor, inclua um resumo das mudancas relacionadas com as issues. Também inclua contexto relacinado ao problema. -->
 
 Closes # (linke sua issue aqui)
 
 ## Tipo de mudança
 
-Por favor delete as mudanças que não forem relevantes
+<!-- Por favor delete as mudanças que não forem relevantes -->
 
 - [ ] Bug fix (mudança não críticaque conserta uma issue)
 - [ ] New feature (mudança não crítica que adiciona uma nova feature)
@@ -15,18 +15,16 @@ Por favor delete as mudanças que não forem relevantes
 
 # Como ele tem sido testado?
 
-Please describe the tests that you ran to verify your changes. Provide instructions so we can reproduce. Please also list any relevant details for your test configuration
-Por favor, descreva que testes você rodou para verificar suas mudanças. Também liste qualquer outro detalhe relevante na configuração dos seus testes
+<!-- Por favor, descreva que testes você rodou para verificar suas mudanças. Também liste qualquer outro detalhe relevante na configuração dos seus testes -->
 
 - [ ] Teste A
 - [ ] Teste B
 
-**Test Configuration**:
+**Configuração de testes**:
 
 - Firmware version:
 - Hardware:
 - Toolchain:
-- SDK:
 
 # Checklist:
 

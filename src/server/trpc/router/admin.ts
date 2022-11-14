@@ -21,7 +21,7 @@ export const adminRouter = router({
     return ctx.prisma.modSuggestion.findMany({
       include: {
         module: { select: { id: true, name: true } },
-        user: { select: { id: true, name: true } },
+        user: { select: { id: true, name: true, image: true } },
       },
     });
   }),
@@ -29,7 +29,7 @@ export const adminRouter = router({
     return ctx.prisma.lesSuggestion.findMany({
       include: {
         lesson: { select: { id: true, name: true } },
-        user: { select: { id: true, name: true } },
+        user: { select: { id: true, name: true, image: true } },
       },
     });
   }),

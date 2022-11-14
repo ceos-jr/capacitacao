@@ -9,6 +9,13 @@ on:
   pull_request:
     branches: ["*"]
 
+env:
+  DATABASE_URL: "postgres://jonathan:pass@localhost:5432/capacitacao"
+  NEXTAUTH_SECRET: "dummysecret"
+  NEXTAUTH_URL: "http://localhost:3000"
+  GITHUB_CLIENT_ID: 123
+  GITHUB_CLIENT_SECRET: 123
+
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -31,6 +38,6 @@ jobs:
       - name: Testing all files
         run: SKIP_ENV_VALIDATION=1 yarn test
       - name: Testing in CI
-        run: SKIP_ENV_VALIDATION=1 yarn test:ci
-      # - name: Building
-      #   run: SKIP_ENV_VALIDATION=1 yarn build
+        run: yarn test:ci
+      - name: Building
+        run: yarn build

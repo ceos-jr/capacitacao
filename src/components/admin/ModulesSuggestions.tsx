@@ -17,11 +17,20 @@ import {
   Tr,
   Skeleton,
   useToast,
+  Popover,
+  Portal,
+  PopoverTrigger,
+  PopoverContent,
+  PopoverArrow,
+  PopoverHeader,
+  PopoverCloseButton,
+  PopoverBody,
 } from "@chakra-ui/react";
 import { trpc } from "@utils/trpc";
-import NextLink from "next/link";
+import NextImage from "next/image";
 import moment from "moment";
 import "moment/locale/pt-br";
+import { FaUserCircle } from "react-icons/fa";
 moment.locale("pt-br");
 
 const ModSuggTabAdmin = () => {
@@ -110,7 +119,23 @@ const ModSuggTabAdmin = () => {
                           .map((sugg) => (
                             <Tr key={sugg.id}>
                               <Td>{sugg.module.name}</Td>
-                              <Td>{sugg.user.name}</Td>
+                              <Td>
+                                <div className="flex gap-x-2 items-center">
+                                  <div className="relative w-8 h-8">
+                                    {sugg.user?.image ? (
+                                      <NextImage
+                                        src={sugg.user.image}
+                                        alt="user avatar"
+                                        fill
+                                        className="object-cover rounded-full"
+                                      />
+                                    ) : (
+                                      <FaUserCircle className="w-full h-full" />
+                                    )}
+                                  </div>
+                                  {sugg.user.name}
+                                </div>
+                              </Td>
                               <Td isNumeric>
                                 {moment(sugg.createdAt).fromNow()}
                               </Td>
@@ -118,13 +143,21 @@ const ModSuggTabAdmin = () => {
                                 isNumeric
                                 className="flex gap-x-2 justify-end items-center"
                               >
-                                {" "}
-                                <NextLink
-                                  href={`/admin/modsuggestions/${sugg.id}`}
-                                  className="p-3 mr-2 font-bold bg-gray-200 rounded-md transition-colors cursor-pointer hover:bg-gray-300"
-                                >
-                                  View
-                                </NextLink>
+                                <Popover>
+                                  <PopoverTrigger>
+                                    <Button>Ver</Button>
+                                  </PopoverTrigger>
+                                  <Portal>
+                                    <PopoverContent>
+                                      <PopoverArrow />
+                                      <PopoverHeader>
+                                        Sugestão de {sugg.user.name}
+                                      </PopoverHeader>
+                                      <PopoverCloseButton />
+                                      <PopoverBody>{sugg.text}</PopoverBody>
+                                    </PopoverContent>
+                                  </Portal>
+                                </Popover>
                                 {sugg.readed ? (
                                   <Button
                                     colorScheme="red"
@@ -188,7 +221,23 @@ const ModSuggTabAdmin = () => {
                         {modSuggestions.data.map((sugg) => (
                           <Tr key={sugg.id}>
                             <Td>{sugg.module.name}</Td>
-                            <Td>{sugg.user.name}</Td>
+                            <Td>
+                              <div className="flex gap-x-2 items-center">
+                                <div className="relative w-8 h-8">
+                                  {sugg.user?.image ? (
+                                    <NextImage
+                                      src={sugg.user.image}
+                                      alt="user avatar"
+                                      fill
+                                      className="object-cover rounded-full"
+                                    />
+                                  ) : (
+                                    <FaUserCircle className="w-full h-full" />
+                                  )}
+                                </div>
+                                {sugg.user.name}
+                              </div>
+                            </Td>
                             <Td isNumeric>
                               {moment(sugg.createdAt).fromNow()}
                             </Td>
@@ -196,13 +245,21 @@ const ModSuggTabAdmin = () => {
                               isNumeric
                               className="flex gap-x-2 justify-end items-center"
                             >
-                              {" "}
-                              <NextLink
-                                href={`/admin/modsuggestions/${sugg.id}`}
-                                className="p-3 mr-2 font-bold bg-gray-200 rounded-md transition-colors cursor-pointer hover:bg-gray-300"
-                              >
-                                View
-                              </NextLink>
+                              <Popover>
+                                <PopoverTrigger>
+                                  <Button>Ver</Button>
+                                </PopoverTrigger>
+                                <Portal>
+                                  <PopoverContent>
+                                    <PopoverArrow />
+                                    <PopoverHeader>
+                                      Sugestão de {sugg.user.name}
+                                    </PopoverHeader>
+                                    <PopoverCloseButton />
+                                    <PopoverBody>{sugg.text}</PopoverBody>
+                                  </PopoverContent>
+                                </Portal>
+                              </Popover>
                               {sugg.readed ? (
                                 <Button
                                   colorScheme="red"

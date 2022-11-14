@@ -30,6 +30,8 @@ import { FaUserCircle } from "react-icons/fa";
 import NextImage from "next/image";
 import { BsThreeDots, BsTrash } from "react-icons/bs";
 import React, { useState } from "react";
+import { Roles } from "@utils/constants";
+import { AiOutlineEye } from "react-icons/ai";
 
 const UserMembers = () => {
   const toast = useToast();
@@ -168,17 +170,27 @@ const UserMembers = () => {
                         <Menu>
                           <MenuButton as={IconButton} icon={<BsThreeDots />} />
                           <MenuList>
+                            {mem.role !== Roles.Admin && (
+                              <MenuItem
+                                icon={<BsTrash />}
+                                onClick={() => {
+                                  setDelUser({
+                                    name: mem.name as string,
+                                    id: mem.id,
+                                  });
+                                  onOpen();
+                                }}
+                              >
+                                Delete User
+                              </MenuItem>
+                            )}
                             <MenuItem
-                              icon={<BsTrash />}
+                              icon={<AiOutlineEye />}
                               onClick={() => {
-                                setDelUser({
-                                  name: mem.name as string,
-                                  id: mem.id,
-                                });
-                                onOpen();
+                                console.log("change me daddy");
                               }}
                             >
-                              Delete User
+                              Ver usuário
                             </MenuItem>
                           </MenuList>
                         </Menu>
