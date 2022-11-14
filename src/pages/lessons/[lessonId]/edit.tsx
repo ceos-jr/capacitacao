@@ -7,7 +7,9 @@ import {
   Heading,
   Input,
   Textarea,
+  useToast,
 } from "@chakra-ui/react";
+import AutoResizeTextarea from "@components/Layout/AutoResizeTextarea";
 import DashboardLayout from "@components/Layout/DashboardLayout";
 import EditLinks from "@components/lessons/EditLinks";
 import EditProjects from "@components/lessons/EditProjects";
@@ -21,31 +23,32 @@ import { type Control, useForm, useWatch } from "react-hook-form";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import { z } from "zod";
+import { BiReset } from "react-icons/bi";
 
 export const LessonWUtils = z.object({
   id: z.string(),
-  name: z.string().min(1, { message: "o nome do tópico é necessário" }),
-  richText: z.string().min(1, { message: "o conteúdo do tópico é necessário" }),
+  name: z.string().min(1, { message: "O nome do tópico é necessário" }),
+  richText: z.string().min(1, { message: "O conteúdo do tópico é necessário" }),
   videos: z.array(
     z.object({
-      name: z.string().min(1, { message: "o nome do video é necessário" }),
-      url: z.string().min(1, { message: "o URL do video é necessário" }),
+      name: z.string().min(1, { message: "O nome do video é necessário" }),
+      url: z.string().min(1, { message: "O URL do video é necessário" }),
       description: z.string(),
     })
   ),
   links: z.array(
     z.object({
-      name: z.string().min(1, { message: "o nome do link é necessário" }),
-      url: z.string().min(1, { message: "o URL do link é necessário" }),
+      name: z.string().min(1, { message: "O nome do link é necessário" }),
+      url: z.string().min(1, { message: "O URL do link é necessário" }),
       description: z.string(),
     })
   ),
   projects: z.array(
     z.object({
-      name: z.string().min(1, { message: "o nome do projeto é necessário" }),
+      name: z.string().min(1, { message: "O nome do projeto é necessário" }),
       richText: z
         .string()
-        .min(1, { message: "o conteúdo do projeto é necessário" }),
+        .min(1, { message: "O conteúdo do projeto é necessário" }),
     })
   ),
 });
@@ -62,8 +65,6 @@ const Edit = () => {
     { refetchOnWindowFocus: false }
   );
 
-  const mutation = trpc.lesson.updateLessonWUtils.useMutation();
-
   const {
     handleSubmit,
     control,
@@ -78,12 +79,33 @@ const Edit = () => {
       name: lesson?.data?.name ?? "",
       richText: lesson?.data?.richText ?? "",
     },
-    mode: "onBlur",
+    mode: "all",
+  });
+
+  const toast = useToast();
+  const mutation = trpc.lesson.updateLessonWUtils.useMutation({
+    onError(err) {
+      toast({
+        title: "Não foi possível editar o tópico",
+        description: `Erro: ${err.message}`,
+        status: "error",
+        duration: 4000,
+        isClosable: true,
+      });
+    },
+    onSuccess() {
+      toast({
+        title: "O tópico foi atualizado com sucesso",
+        status: "success",
+        duration: 2000,
+        isClosable: true,
+      });
+      router.push(`/lessons/${lessonId}`);
+    },
   });
 
   const onSubmit = async (data: FormSchemaType) => {
     mutation.mutate(data);
-    router.push(`/modules/${lesson.data?.moduleId}`);
   };
 
   useEffect(() => {
@@ -124,15 +146,17 @@ const Edit = () => {
         ) : (
           <form onSubmit={handleSubmit(onSubmit)}>
             <div className="flex flex-col gap-y-4">
-              <Heading> Tópico</Heading>
-              <FormControl isInvalid={!!errors.name} isRequired>
-                <FormLabel htmlFor="name">Nome do tópico</FormLabel>
+              <Heading>Tópico</Heading>
+              <FormControl isInvalid={!!errors.name} isRequired id="name">
+                <div className="flex gap-2">
+                  <FormLabel>Nome do tópico</FormLabel>
+                  <BiReset
+                    className="w-6 h-6 transition-colors cursor-pointer hover:text-secondary"
+                    onClick={() => resetField("name")}
+                  />
+                </div>
                 <Input
-                  id="name"
-                  type="name"
                   bgColor="white"
-                  aria-invalid={errors.name ? true : false}
-                  aria-errormessage="name-error"
                   placeholder="um tópico excelente"
                   {...register("name")}
                 />
@@ -140,18 +164,25 @@ const Edit = () => {
                   <FormErrorMessage>{errors.name.message}</FormErrorMessage>
                 )}
               </FormControl>
-              <FormControl isInvalid={!!errors.richText} isRequired>
-                <FormLabel htmlFor="richText">
-                  Conteúdo do tópico (em markdown)
-                </FormLabel>
+              <FormControl
+                isInvalid={!!errors.richText}
+                isRequired
+                id="rich-text"
+              >
+                <div className="flex gap-2">
+                  <FormLabel>Conteúdo do tópico (em markdown)</FormLabel>
+                  <BiReset
+                    className="flex-shrink-0 w-6 h-6 transition-colors cursor-pointer hover:text-secondary"
+                    onClick={() => resetField("richText")}
+                  />
+                </div>
                 {errors.richText && (
                   <FormErrorMessage className="mb-2">
                     {errors.richText.message}
                   </FormErrorMessage>
                 )}
-                <div className="grid grid-cols-2 gap-4">
-                  <Textarea
-                    id="richText"
+                <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                  <AutoResizeTextarea
                     bgColor="white"
                     {...register("richText")}
                   />
@@ -162,16 +193,19 @@ const Edit = () => {
                 errors={errors}
                 register={register}
                 control={control}
+                resetField={resetField}
               />
               <EditLinks
                 errors={errors}
                 register={register}
                 control={control}
+                resetField={resetField}
               />
               <EditProjects
                 errors={errors}
                 register={register}
                 control={control}
+                resetField={resetField}
               />
             </div>
             <Button type="submit" colorScheme="red" className="mt-4 w-full">
