@@ -43,7 +43,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
   } else if (session.user?.role !== Roles.Admin) {
     return {
       redirect: {
-        destination: "/unauthorized",
+        destination: "/401",
         permanent: false,
       },
     };
