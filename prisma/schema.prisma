@@ -92,7 +92,9 @@ model UserTaskProgress {
   lessonId     String
   userLessProg UserLessonProgress @relation(fields: [userId, lessonId], references: [userId, lessonId], onDelete: Cascade)
   startedAt    DateTime           @default(now())
-  completed    Boolean            @default(false)
+  status    TaskStatus            @default(NOTSUBMITTED)
+  richText String?
+  grade Float?
   completedAt  DateTime?
 
   @@unique([userId, taskId])
@@ -208,4 +210,10 @@ enum Role {
   ADMIN
   MEMBER
   UNAUTHENTICATED
+}
+
+enum TaskStatus{
+  NOTSUBMITTED
+  SUBMITTED
+  COMPLETED
 }
