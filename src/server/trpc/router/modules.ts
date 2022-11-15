@@ -41,7 +41,7 @@ export const moduleRouter = router({
         },
         include: {
           lessonProg: {
-            select: { tasksProg: { select: { completed: true } } },
+            select: { tasksProg: { select: { status: true } } },
           },
         },
       });

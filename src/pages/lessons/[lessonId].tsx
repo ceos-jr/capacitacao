@@ -10,9 +10,10 @@ import {
 import DashboardLayout from "@components/Layout/DashboardLayout";
 import LessSuggestionModal from "@components/Layout/LessSuggestionModal";
 import ResourceTab from "@components/lessons/ResourceTab";
+import TaskList from "@components/lessons/Tasklist";
 import { trpc } from "@utils/trpc";
 import moment from "moment";
-import { GetServerSideProps } from "next";
+import { type GetServerSideProps } from "next";
 import Head from "next/head";
 import { useRouter } from "next/router";
 import { AiOutlineInbox } from "react-icons/ai";
@@ -69,6 +70,7 @@ const Lesson = () => {
               videos={lesson.data.videos}
               projects={lesson.data.projects}
             />
+            <TaskList lessonId={lessonId} tasks={lesson.data.tasks} />
           </>
         )}
       </main>

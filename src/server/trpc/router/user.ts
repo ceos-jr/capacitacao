@@ -42,6 +42,13 @@ export const userRouter = router({
       where: { userId: ctx.session.user.id, completed: false },
     });
   }),
+  getTasks4Less: protectedProcedure
+    .input(z.string())
+    .query(({ ctx, input }) => {
+      return ctx.prisma.userTaskProgress.findMany({
+        where: { lessonId: input, userId: ctx.session.user.id },
+      });
+    }),
   updModLastSeen: protectedProcedure
     .input(z.string())
     .mutation(({ ctx, input }) => {
