@@ -58,7 +58,7 @@ const LinkList = ({ links }: LinkListProps) => {
             >
               ADMIN
             </Highlight>{" "}
-            para adicionar a documentação necessária ou adicione uma sugestão
+            para adicionar a documentação necessária ou mande uma sugestão
           </Text>
         </div>
       )}

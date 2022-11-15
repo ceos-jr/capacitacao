@@ -1,5 +1,6 @@
 import { LessSuggestionSchema } from "@components/Layout/LessSuggestionModal";
 import { SuggestionFormSchema } from "@components/Layout/ModSuggestionModal";
+import { TaskStatus } from "@utils/constants";
 import { z } from "zod";
 
 import { router, protectedProcedure } from "../trpc";
@@ -39,7 +40,10 @@ export const userRouter = router({
   }),
   getTaskInProg: protectedProcedure.query(({ ctx }) => {
     return ctx.prisma.userTaskProgress.findMany({
-      where: { userId: ctx.session.user.id, completed: false },
+      where: {
+        userId: ctx.session.user.id,
+        NOT: { status: TaskStatus.Completed },
+      },
     });
   }),
   getTasks4Less: protectedProcedure
@@ -88,6 +92,24 @@ export const userRouter = router({
           lessonId: input.lessonId,
           userId: ctx.session.user.id,
           text: input.text,
+        },
+      });
+    }),
+  submitTask: protectedProcedure
+    .input(
+      z.object({
+        id: z.string(),
+        richText: z.string(),
+      })
+    )
+    .mutation(({ ctx, input }) => {
+      return ctx.prisma.userTaskProgress.update({
+        where: {
+          userId_taskId: { taskId: input.id, userId: ctx.session.user.id },
+        },
+        data: {
+          richText: input.richText,
+          status: TaskStatus.Submitted,
         },
       });
     }),

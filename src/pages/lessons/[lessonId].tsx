@@ -1,6 +1,7 @@
 import {
   Button,
   Heading,
+  Highlight,
   Skeleton,
   SkeletonText,
   Stack,
@@ -59,12 +60,37 @@ const Lesson = () => {
             <Text as="i">
               Ultima atualização {moment(lesson.data?.updatedAt).fromNow()}
             </Text>
-            <ReactMarkdown
-              remarkPlugins={[remarkGfm]}
-              className="max-w-none prose prose-lg"
-            >
-              {lesson.data.richText}
-            </ReactMarkdown>
+            {lesson.data.richText.length === 0 ? (
+              <div className="flex flex-col justify-center items-center p-16 bg-white rounded-lg shadow-lg">
+                <Text className="text-lg font-bold">
+                  {" "}
+                  Nenhum conteúdo foi disponibilizado para esse tópico
+                </Text>
+                <Text>
+                  {" "}
+                  Entre em contato com seu{" "}
+                  <Highlight
+                    query="ADMIN"
+                    styles={{
+                      px: "2",
+                      py: "1",
+                      rounded: "full",
+                      bg: "secondary",
+                    }}
+                  >
+                    ADMIN
+                  </Highlight>{" "}
+                  para adicionar um conteúdo ou mande uma sugestão
+                </Text>
+              </div>
+            ) : (
+              <ReactMarkdown
+                remarkPlugins={[remarkGfm]}
+                className="max-w-none prose prose-lg"
+              >
+                {lesson.data.richText}
+              </ReactMarkdown>
+            )}
             <ResourceTab
               links={lesson.data.links}
               videos={lesson.data.videos}

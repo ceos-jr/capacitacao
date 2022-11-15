@@ -43,7 +43,7 @@ const ProjectList = ({ projects }: VideoListProps) => {
             >
               ADMIN
             </Highlight>{" "}
-            para adicionar um projeto ou adicione uma sugestão
+            para adicionar um projeto ou mande uma sugestão
           </Text>
         </div>
       )}
