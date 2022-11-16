@@ -41,7 +41,7 @@ export const adminRouter = router({
       },
       include: {
         user: { select: { name: true, image: true } },
-        task: { select: { name: true } },
+        task: true,
       },
     });
   }),

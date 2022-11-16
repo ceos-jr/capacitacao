@@ -39,8 +39,18 @@ const SendGrade = ({
   cancelRef,
 }: SendGradeProps) => {
   const toast = useToast();
+  const utils = trpc.useContext();
   const mutation = trpc.admin.attributeGrade.useMutation({
-    onError(err) {
+    async onMutate(data) {
+      await utils.admin.getLatestSubmissions.cancel();
+      const prevData = utils.admin.getLatestSubmissions.getData();
+      const newData = prevData?.filter((sub) => sub.taskId !== data.taskId);
+      utils.admin.getLatestSubmissions.setData(newData);
+
+      return { prevData };
+    },
+    onError(err, _, ctx) {
+      utils.admin.getLatestSubmissions.setData(ctx?.prevData);
       toast({
         title: "Não foi possível atribuir uma nota",
         description: `Erro: ${err.message}`,
@@ -75,7 +85,8 @@ const SendGrade = ({
         <AlertDialogBody className="flex flex-col gap-4">
           <Text>
             Atribua uma nota entre <span className="font-bold">0 e 5</span> para
-            a atividade {taskname} do usuário {username}
+            a atividade <span className="font-bold">{taskname}</span> do usuário{" "}
+            <span className="font-bold">{username}</span>
           </Text>
           <NumberInput
             max={5}
