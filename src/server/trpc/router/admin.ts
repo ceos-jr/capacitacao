@@ -1,3 +1,4 @@
+import { TaskStatus } from "@utils/constants";
 import { z } from "zod";
 
 import { router, adminProcedure } from "../trpc";
@@ -30,6 +31,17 @@ export const adminRouter = router({
       include: {
         lesson: { select: { id: true, name: true } },
         user: { select: { id: true, name: true, image: true } },
+      },
+    });
+  }),
+  getLatestSubmissions: adminProcedure.query(({ ctx }) => {
+    return ctx.prisma.userTaskProgress.findMany({
+      where: {
+        status: TaskStatus.Submitted,
+      },
+      include: {
+        user: { select: { name: true, image: true } },
+        task: { select: { name: true } },
       },
     });
   }),

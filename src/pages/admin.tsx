@@ -2,6 +2,7 @@ import AdminStats from "@components/admin/AdminStats";
 import LessonSuggestions from "@components/admin/LessonSuggestions";
 import ModulesSuggestions from "@components/admin/ModulesSuggestions";
 import UserMembers from "@components/admin/UserMembers";
+import UserSubmissions from "@components/admin/UserSubmissions";
 import DashboardLayout from "@components/Layout/DashboardLayout";
 import { Roles } from "@utils/constants";
 import { type GetServerSideProps } from "next";
@@ -18,6 +19,7 @@ const Admin = () => {
       <main className="flex flex-col gap-4 p-4 h-max">
         <AdminStats />
         <UserMembers />
+        <UserSubmissions />
         <ModulesSuggestions />
         <LessonSuggestions />
       </main>
