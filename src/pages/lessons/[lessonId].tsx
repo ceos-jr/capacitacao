@@ -14,13 +14,15 @@ import ResourceTab from "@components/lessons/ResourceTab";
 import TaskList from "@components/lessons/Tasklist";
 import { trpc } from "@utils/trpc";
 import moment from "moment";
+import "moment/locale/pt-br";
 import { type GetServerSideProps } from "next";
 import Head from "next/head";
 import { useRouter } from "next/router";
 import { AiOutlineInbox } from "react-icons/ai";
-import ReactMarkdown from "react-markdown";
-import remarkGfm from "remark-gfm";
 import { getServerAuthSession } from "src/server/common/get-server-auth-session";
+import DisplayMarkdown from "@components/Layout/DisplayMarkdown";
+
+moment.locale("pt-br");
 
 const Lesson = () => {
   const lessonId = useRouter().query.lessonId as string;
@@ -84,12 +86,7 @@ const Lesson = () => {
                 </Text>
               </div>
             ) : (
-              <ReactMarkdown
-                remarkPlugins={[remarkGfm]}
-                className="max-w-none prose prose-lg"
-              >
-                {lesson.data.richText}
-              </ReactMarkdown>
+              <DisplayMarkdown text={lesson.data.richText} />
             )}
             <ResourceTab
               links={lesson.data.links}

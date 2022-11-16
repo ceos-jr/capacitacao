@@ -1,7 +1,6 @@
 import { Text, Highlight, List, ListItem, Heading } from "@chakra-ui/react";
+import DisplayMarkdown from "@components/Layout/DisplayMarkdown";
 import { type Project } from "@prisma/client";
-import ReactMarkdown from "react-markdown";
-import remarkGfm from "remark-gfm";
 
 interface VideoListProps {
   projects: Project[];
@@ -21,12 +20,7 @@ const ProjectList = ({ projects }: VideoListProps) => {
                 <Heading as="h3" size="xl">
                   {project.name}
                 </Heading>
-                <ReactMarkdown
-                  remarkPlugins={[remarkGfm]}
-                  className="max-w-none prose"
-                >
-                  {project.richText}
-                </ReactMarkdown>
+                <DisplayMarkdown text={project.richText} />
               </div>
             </ListItem>
           ))}

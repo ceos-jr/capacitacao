@@ -9,8 +9,7 @@ import {
   ModalHeader,
   ModalOverlay,
 } from "@chakra-ui/react";
-import ReactMarkdown from "react-markdown";
-import remarkGfm from "remark-gfm";
+import DisplayMarkdown from "@components/Layout/DisplayMarkdown";
 
 interface ShowTaskModalProps {
   isOpen: boolean;
@@ -26,12 +25,7 @@ const ShowTaskModal = ({ task, isOpen, onClose }: ShowTaskModalProps) => {
         <ModalHeader>{task?.name}</ModalHeader>
         <ModalCloseButton />
         <ModalBody>
-          <ReactMarkdown
-            remarkPlugins={[remarkGfm]}
-            className="p-4 max-w-none bg-white rounded-lg prose prose-lg"
-          >
-            {task?.richText ?? ""}
-          </ReactMarkdown>
+          <DisplayMarkdown text={task?.richText ?? ""} />
         </ModalBody>
         <ModalFooter>
           <Button colorScheme="gray" mr={3} onClick={onClose}>

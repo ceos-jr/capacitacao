@@ -8,8 +8,8 @@ import {
   ModalContent,
   ModalCloseButton,
 } from "@chakra-ui/react";
-import ReactMarkdown from "react-markdown";
-import remarkGfm from "remark-gfm";
+import DisplayMarkdown from "@components/Layout/DisplayMarkdown";
+
 interface SeeTaskModalProps {
   isOpen: boolean;
   onClose: () => void;
@@ -34,12 +34,7 @@ const SeeSubmissionModal = ({
         </ModalHeader>
         <ModalCloseButton />
         <ModalBody>
-          <ReactMarkdown
-            remarkPlugins={[remarkGfm]}
-            className="max-w-none prose"
-          >
-            {text}
-          </ReactMarkdown>
+          <DisplayMarkdown text={text} />
         </ModalBody>
         <ModalFooter>
           <Button onClick={onClose}>Fechar</Button>
