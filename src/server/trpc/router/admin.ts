@@ -50,4 +50,20 @@ export const adminRouter = router({
       where: { id: input },
     });
   }),
+  attributeGrade: adminProcedure
+    .input(z.object({ taskId: z.string(), userId: z.string() }))
+    .mutation(({ ctx, input }) => {
+      return ctx.prisma.userTaskProgress.update({
+        where: {
+          userId_taskId: {
+            taskId: input.taskId,
+            userId: input.userId,
+          },
+        },
+        data: {
+          completedAt: new Date(),
+          status: TaskStatus.Completed,
+        },
+      });
+    }),
 });
