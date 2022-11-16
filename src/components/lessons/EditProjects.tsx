@@ -8,6 +8,7 @@ import {
   Input,
 } from "@chakra-ui/react";
 import AutoResizeTextarea from "@components/Layout/AutoResizeTextarea";
+import DisplayMarkdown from "@components/Layout/DisplayMarkdown";
 import {
   type FieldErrorsImpl,
   useFieldArray,
@@ -18,8 +19,6 @@ import {
 } from "react-hook-form";
 import { AiFillDelete, AiOutlineArrowUp, AiOutlinePlus } from "react-icons/ai";
 import { BiReset } from "react-icons/bi";
-import ReactMarkdown from "react-markdown";
-import remarkGfm from "remark-gfm";
 import { type FormSchemaType } from "src/pages/lessons/[lessonId]/edit";
 
 interface EditProjectsProps {
@@ -151,14 +150,7 @@ const PreviewText = ({
     }
     return "";
   };
-  return (
-    <ReactMarkdown
-      remarkPlugins={[remarkGfm]}
-      className="p-4 max-w-none bg-white rounded-lg prose prose-lg"
-    >
-      {getRichText()}
-    </ReactMarkdown>
-  );
+  return <DisplayMarkdown text={getRichText()} />;
 };
 
 export default EditProjects;

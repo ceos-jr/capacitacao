@@ -1,3 +1,4 @@
+import { TaskStatus } from "@utils/constants";
 import { z } from "zod";
 
 import { router, adminProcedure } from "../trpc";
@@ -33,9 +34,36 @@ export const adminRouter = router({
       },
     });
   }),
+  getLatestSubmissions: adminProcedure.query(({ ctx }) => {
+    return ctx.prisma.userTaskProgress.findMany({
+      where: {
+        status: TaskStatus.Submitted,
+      },
+      include: {
+        user: { select: { name: true, image: true } },
+        task: true,
+      },
+    });
+  }),
   delUser: adminProcedure.input(z.string()).mutation(({ ctx, input }) => {
     return ctx.prisma.user.delete({
       where: { id: input },
     });
   }),
+  attributeGrade: adminProcedure
+    .input(z.object({ taskId: z.string(), userId: z.string() }))
+    .mutation(({ ctx, input }) => {
+      return ctx.prisma.userTaskProgress.update({
+        where: {
+          userId_taskId: {
+            taskId: input.taskId,
+            userId: input.userId,
+          },
+        },
+        data: {
+          completedAt: new Date(),
+          status: TaskStatus.Completed,
+        },
+      });
+    }),
 });

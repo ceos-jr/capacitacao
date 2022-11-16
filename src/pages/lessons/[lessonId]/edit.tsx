@@ -6,7 +6,6 @@ import {
   FormLabel,
   Heading,
   Input,
-  Textarea,
   useToast,
 } from "@chakra-ui/react";
 import AutoResizeTextarea from "@components/Layout/AutoResizeTextarea";
@@ -20,10 +19,9 @@ import Head from "next/head";
 import { useRouter } from "next/router";
 import { useEffect } from "react";
 import { type Control, useForm, useWatch } from "react-hook-form";
-import ReactMarkdown from "react-markdown";
-import remarkGfm from "remark-gfm";
 import { z } from "zod";
 import { BiReset } from "react-icons/bi";
+import DisplayMarkdown from "@components/Layout/DisplayMarkdown";
 
 export const LessonWUtils = z.object({
   id: z.string(),
@@ -226,12 +224,5 @@ Edit.getLayout = function getLayout(page: React.ReactElement) {
 
 const PreviewText = ({ control }: { control: Control<FormSchemaType> }) => {
   const text = useWatch({ control, name: "richText" });
-  return (
-    <ReactMarkdown
-      remarkPlugins={[remarkGfm]}
-      className="p-4 max-w-none bg-white rounded-lg prose prose-lg"
-    >
-      {text}
-    </ReactMarkdown>
-  );
+  return <DisplayMarkdown text={text} />;
 };

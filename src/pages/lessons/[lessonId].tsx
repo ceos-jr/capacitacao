@@ -1,6 +1,7 @@
 import {
   Button,
   Heading,
+  Highlight,
   Skeleton,
   SkeletonText,
   Stack,
@@ -10,15 +11,18 @@ import {
 import DashboardLayout from "@components/Layout/DashboardLayout";
 import LessSuggestionModal from "@components/Layout/LessSuggestionModal";
 import ResourceTab from "@components/lessons/ResourceTab";
+import TaskList from "@components/lessons/Tasklist";
 import { trpc } from "@utils/trpc";
 import moment from "moment";
-import { GetServerSideProps } from "next";
+import "moment/locale/pt-br";
+import { type GetServerSideProps } from "next";
 import Head from "next/head";
 import { useRouter } from "next/router";
 import { AiOutlineInbox } from "react-icons/ai";
-import ReactMarkdown from "react-markdown";
-import remarkGfm from "remark-gfm";
 import { getServerAuthSession } from "src/server/common/get-server-auth-session";
+import DisplayMarkdown from "@components/Layout/DisplayMarkdown";
+
+moment.locale("pt-br");
 
 const Lesson = () => {
   const lessonId = useRouter().query.lessonId as string;
@@ -58,17 +62,38 @@ const Lesson = () => {
             <Text as="i">
               Ultima atualização {moment(lesson.data?.updatedAt).fromNow()}
             </Text>
-            <ReactMarkdown
-              remarkPlugins={[remarkGfm]}
-              className="max-w-none prose prose-lg"
-            >
-              {lesson.data.richText}
-            </ReactMarkdown>
+            {lesson.data.richText.length === 0 ? (
+              <div className="flex flex-col justify-center items-center p-16 bg-white rounded-lg shadow-lg">
+                <Text className="text-lg font-bold">
+                  {" "}
+                  Nenhum conteúdo foi disponibilizado para esse tópico
+                </Text>
+                <Text>
+                  {" "}
+                  Entre em contato com seu{" "}
+                  <Highlight
+                    query="ADMIN"
+                    styles={{
+                      px: "2",
+                      py: "1",
+                      rounded: "full",
+                      bg: "secondary",
+                    }}
+                  >
+                    ADMIN
+                  </Highlight>{" "}
+                  para adicionar um conteúdo ou mande uma sugestão
+                </Text>
+              </div>
+            ) : (
+              <DisplayMarkdown text={lesson.data.richText} />
+            )}
             <ResourceTab
               links={lesson.data.links}
               videos={lesson.data.videos}
               projects={lesson.data.projects}
             />
+            <TaskList lessonId={lessonId} tasks={lesson.data.tasks} />
           </>
         )}
       </main>

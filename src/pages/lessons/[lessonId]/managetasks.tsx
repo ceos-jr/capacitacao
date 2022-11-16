@@ -18,9 +18,8 @@ import React, { useState } from "react";
 import { type RouterTypes, trpc } from "@utils/trpc";
 import { useRouter } from "next/router";
 import TaskForm from "@components/lessons/TaskForm";
-import ReactMarkdown from "react-markdown";
-import remarkGfm from "remark-gfm";
 import DeleteTaskAlert from "@components/lessons/DeleteTaskAlert";
+import DisplayMarkdown from "@components/Layout/DisplayMarkdown";
 
 const CreateTask = () => {
   const lessonId = useRouter().query.lessonId as string;
@@ -117,12 +116,7 @@ const CreateTask = () => {
                       </Button>
                     </h2>
                     <AccordionPanel pb={4}>
-                      <ReactMarkdown
-                        remarkPlugins={[remarkGfm]}
-                        className="max-w-none prose prose-lg"
-                      >
-                        {task.richText}
-                      </ReactMarkdown>
+                      <DisplayMarkdown text={task.richText} />
                     </AccordionPanel>
                   </AccordionItem>
                 ))}

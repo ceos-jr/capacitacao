@@ -30,6 +30,7 @@ import LogoExtended from "./LogoExtended";
 import { signOut } from "next-auth/react";
 import { Inter } from "@next/font/google";
 import { Roles } from "@utils/constants";
+import ChangeRoleFooter from "./ChangeRoleFooter";
 
 const inter = Inter({
   variable: "--font-inter",
@@ -111,6 +112,7 @@ const SidebarContent = ({ onClose, ...rest }: SidebarProps) => {
           <NavItem icon={FaHardHat} name="Admin" />
         </NextLink>
       )}
+      <ChangeRoleFooter />
     </Box>
   );
 };

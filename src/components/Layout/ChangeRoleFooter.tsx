@@ -21,7 +21,7 @@ export const ChangeRoleFooter = () => {
     <>
       {process.env.NEXT_PUBLIC_MOCK_NEXT_AUTH === "true" && (
         <div className="bg-red-200">
-          <div className="container flex gap-2 items-center mx-auto text-black">
+          <div className="container flex flex-col gap-2 items-center mx-auto text-black">
             DEVELOPMENT ROLE SWITCHER:
             <button
               onClick={() => {

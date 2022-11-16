@@ -38,6 +38,20 @@ const lessons: Prisma.LessonCreateManyInput[] = [
   },
 ];
 
+const tasks: Prisma.TaskCreateManyInput[] = [
+  {
+    name: "plantar bananeira",
+    richText:
+      "tente se jogar no chao com as duas maos pra baixo, boa sorte kkk",
+    lessonId: lessons[0]?.id as string,
+  },
+  {
+    name: "va pro UFC derrotar o Poatan",
+    richText: "esse aqui que vc precisa de sorte",
+    lessonId: lessons[0]?.id as string,
+  },
+];
+
 const modSugg = [
   {
     userId: mU.MEMBER.id as string,
@@ -93,6 +107,8 @@ async function main() {
   await prisma.module.createMany({ data: modules });
   console.log("creating lessons");
   await prisma.lesson.createMany({ data: lessons });
+  console.log("creating tasks");
+  await prisma.task.createMany({ data: tasks });
   console.log("creating modules suggestions");
   await prisma.modSuggestion.createMany({ data: modSugg });
   console.log("creating lessons suggestions");

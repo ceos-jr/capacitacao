@@ -9,7 +9,7 @@ export const lessonRouter = router({
     .query(({ ctx, input }) => {
       return ctx.prisma.lesson.findUnique({
         where: { id: input.lessonId },
-        include: { links: true, videos: true, projects: true },
+        include: { links: true, videos: true, projects: true, tasks: true },
       });
     }),
   getLessTasks: publicProcedure
