@@ -29,6 +29,16 @@ export const userRouter = router({
       orderBy: { lastTimeSeen: "desc" },
     });
   }),
+  getCompMod: protectedProcedure.query(({ ctx }) => {
+    return ctx.prisma.userModuleProgress.findMany({
+      where: { userId: ctx.session.user.id, completed: true },
+      include: {
+        module: { select: { name: true, description: true } },
+        lessonProg: { select: { completed: true } },
+      },
+      orderBy: { lastTimeSeen: "desc" },
+    });
+  }),
   getModProg: protectedProcedure.input(z.string()).query(({ ctx, input }) => {
     return ctx.prisma.userModuleProgress.findUnique({
       where: {
