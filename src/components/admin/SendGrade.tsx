@@ -114,7 +114,7 @@ const SendGrade = ({
             colorScheme="twitter"
             ml={3}
             onClick={() => {
-              mutation.mutate({ taskId, userId });
+              mutation.mutate({ taskId, userId, grade });
               onClose();
             }}
           >
