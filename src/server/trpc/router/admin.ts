@@ -69,4 +69,7 @@ export const adminRouter = router({
         },
       });
     }),
+  delModule: adminProcedure.input(z.string()).mutation(({ ctx, input }) => {
+    return ctx.prisma.module.delete({ where: { id: input } });
+  }),
 });

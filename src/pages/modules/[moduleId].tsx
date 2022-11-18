@@ -11,22 +11,47 @@ import {
 import DashboardLayout from "@components/Layout/DashboardLayout";
 import ModSuggestionModal from "@components/Layout/ModSuggestionModal";
 import LessonsList from "@components/modules/LessonsList";
+import { Role } from "@prisma/client";
 import { trpc } from "@utils/trpc";
+import { useSession } from "@utils/useSession";
 import Head from "next/head";
 import { useRouter } from "next/router";
 import { useState } from "react";
-import { AiOutlineInbox } from "react-icons/ai";
+import { AiOutlineDelete, AiOutlineInbox } from "react-icons/ai";
 
 const UniqueModule = () => {
+  const { data: session } = useSession();
+  const [posting, setPosting] = useState(false);
+  const toast = useToast();
+  const { isOpen, onOpen, onClose } = useDisclosure();
+  const router = useRouter();
+
+  const utils = trpc.useContext();
   const moduleId = useRouter().query.moduleId as string;
   const { data: moduleData } = trpc.module.getUnique.useQuery({
     moduleId,
   });
   const { data: userRel } = trpc.module.getUserModStats.useQuery({ moduleId });
-  const utils = trpc.useContext();
-
-  const toast = useToast();
-  const [posting, setPosting] = useState(false);
+  const delModule = trpc.admin.delModule.useMutation({
+    onError(err) {
+      toast({
+        title: "Não foi possível deletear o módulo",
+        description: `Erro: ${err.message}`,
+        status: "error",
+        duration: 4000,
+        isClosable: true,
+      });
+    },
+    onSuccess() {
+      toast({
+        title: "O módulo foi deletado com sucesso",
+        status: "success",
+        duration: 2000,
+        isClosable: true,
+      });
+      router.push("/modules");
+    },
+  });
   const subsToModule = trpc.module.subsToModule.useMutation({
     onError(err) {
       toast({
@@ -81,8 +106,6 @@ const UniqueModule = () => {
     },
   });
 
-  const { isOpen, onOpen, onClose } = useDisclosure();
-
   return (
     <>
       <Head>
@@ -116,6 +139,15 @@ const UniqueModule = () => {
                 </Button>
               ) : (
                 <div className="flex gap-4">
+                  {session?.user?.role === Role.ADMIN && (
+                    <Button
+                      leftIcon={<AiOutlineDelete />}
+                      colorScheme="red"
+                      onClick={() => delModule.mutate(moduleId)}
+                    >
+                      Deletar
+                    </Button>
+                  )}
                   <Button
                     onClick={onOpen}
                     leftIcon={<AiOutlineInbox />}
