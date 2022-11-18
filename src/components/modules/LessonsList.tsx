@@ -1,5 +1,6 @@
 import {
   Badge,
+  Button,
   Table,
   TableContainer,
   Tbody,
@@ -12,6 +13,8 @@ import { Roles, TaskStatus } from "@utils/constants";
 import { useSession } from "@utils/useSession";
 import NextLink from "next/link";
 import { type RouterTypes } from "@utils/trpc";
+import EditLessonMenu from "@components/lessons/EditLessonMenu";
+import { AiOutlineEye } from "react-icons/ai";
 
 interface LessonListProps {
   lessons: { id: string; name: string; tasks: { id: string }[] }[];
@@ -66,20 +69,12 @@ const LessonList = ({ lessons, userModRel }: LessonListProps) => {
               </Td>
               <Td isNumeric>
                 {userModRel && (
-                  <NextLink
-                    href={`/lessons/${lesson.id}`}
-                    className="p-3 mr-2 font-bold bg-gray-200 rounded-md transition-colors cursor-pointer hover:bg-gray-300"
-                  >
-                    View
+                  <NextLink href={`/lessons/${lesson.id}`} className="mr-2">
+                    <Button leftIcon={<AiOutlineEye />}>Ver</Button>
                   </NextLink>
                 )}
                 {session?.user?.role === Roles.Admin && (
-                  <NextLink
-                    href={`/lessons/${lesson.id}/edit`}
-                    className="p-3 mr-2 font-bold bg-gray-200 rounded-md transition-colors cursor-pointer hover:bg-gray-300"
-                  >
-                    Edit
-                  </NextLink>
+                  <EditLessonMenu lessonId={lesson.id} />
                 )}
               </Td>
             </Tr>
