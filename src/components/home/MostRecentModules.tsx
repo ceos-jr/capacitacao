@@ -28,6 +28,7 @@ const MostRecentModules = () => {
                   lastTimeSeen={mod.lastTimeSeen}
                   description={mod.module.description}
                   lessonProg={mod.lessonProg}
+                  completed={mod.completed}
                 />
               ))}
             </div>

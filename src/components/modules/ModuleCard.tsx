@@ -12,12 +12,7 @@ type ModuleCardProps = {
   description: string | null;
 };
 
-export const ModuleCard = ({
-  updatedAt,
-  name,
-  description,
-  id,
-}: ModuleCardProps) => {
+export const ModuleCard = ({ name, description, id }: ModuleCardProps) => {
   const updateLastSeen = trpc.user.updModLastSeen.useMutation();
   return (
     <NextLink href={`/modules/${id}`} onClick={() => updateLastSeen.mutate(id)}>
@@ -32,9 +27,6 @@ export const ModuleCard = ({
         role="group"
         className="shadow-lg"
       >
-        <Box as="time" dateTime="2021-01-15 15:30:00 +0000 UTC">
-          {moment(updatedAt).fromNow()}
-        </Box>
         <Heading
           size="md"
           my="2"

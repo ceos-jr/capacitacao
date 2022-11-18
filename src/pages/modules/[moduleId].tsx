@@ -14,6 +14,7 @@ import LessonsList from "@components/modules/LessonsList";
 import { trpc } from "@utils/trpc";
 import Head from "next/head";
 import { useRouter } from "next/router";
+import { useState } from "react";
 import { AiOutlineInbox } from "react-icons/ai";
 
 const UniqueModule = () => {
@@ -25,6 +26,7 @@ const UniqueModule = () => {
   const utils = trpc.useContext();
 
   const toast = useToast();
+  const [posting, setPosting] = useState(false);
   const subsToModule = trpc.module.subsToModule.useMutation({
     onError(err) {
       toast({
@@ -43,6 +45,9 @@ const UniqueModule = () => {
         isClosable: true,
       });
       utils.module.getUserModStats.refetch({ moduleId });
+    },
+    onSettled() {
+      setPosting(false);
     },
   });
 
@@ -71,6 +76,9 @@ const UniqueModule = () => {
         isClosable: true,
       });
     },
+    onSettled() {
+      setPosting(false);
+    },
   });
 
   const { isOpen, onOpen, onClose } = useDisclosure();
@@ -98,7 +106,11 @@ const UniqueModule = () => {
               {!userRel ? (
                 <Button
                   colorScheme="green"
-                  onClick={() => subsToModule.mutate(moduleData)}
+                  isLoading={posting}
+                  onClick={() => {
+                    setPosting(true);
+                    subsToModule.mutate(moduleData);
+                  }}
                 >
                   Inscrever
                 </Button>
@@ -113,9 +125,11 @@ const UniqueModule = () => {
                   </Button>
                   <Button
                     colorScheme="red"
-                    onClick={() =>
-                      desubToModule.mutate({ moduleId: moduleData.id })
-                    }
+                    isLoading={posting}
+                    onClick={() => {
+                      setPosting(true);
+                      desubToModule.mutate({ moduleId: moduleData.id });
+                    }}
                   >
                     Desinscrever
                   </Button>

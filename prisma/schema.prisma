@@ -142,6 +142,8 @@ model Lesson {
   links       Link[]
   projects    Project[]
   suggestions LesSuggestion[]
+  previous String?
+  next String?
 }
 
 model Task {

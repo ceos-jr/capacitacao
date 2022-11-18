@@ -10,7 +10,7 @@ export const userRouter = router({
     .input(z.number())
     .query(({ ctx, input }) => {
       return ctx.prisma.userModuleProgress.findMany({
-        where: { userId: ctx.session.user.id, completed: false },
+        where: { userId: ctx.session.user.id },
         include: {
           module: { select: { name: true, description: true } },
           lessonProg: { select: { completed: true } },
@@ -26,6 +26,18 @@ export const userRouter = router({
         module: { select: { name: true, description: true } },
         lessonProg: { select: { completed: true } },
       },
+    });
+  }),
+  getModProg: protectedProcedure.input(z.string()).query(({ ctx, input }) => {
+    return ctx.prisma.userModuleProgress.findUnique({
+      where: {
+        userId_moduleId: { userId: ctx.session.user.id, moduleId: input },
+      },
+    });
+  }),
+  getTaskProg: protectedProcedure.input(z.string()).query(({ ctx, input }) => {
+    return ctx.prisma.userTaskProgress.findUnique({
+      where: { userId_taskId: { userId: ctx.session.user.id, taskId: input } },
     });
   }),
   getNumModInProg: protectedProcedure.query(({ ctx }) => {
@@ -112,5 +124,42 @@ export const userRouter = router({
           status: TaskStatus.Submitted,
         },
       });
+    }),
+  compLesson: protectedProcedure
+    .input(z.string())
+    .mutation(async ({ ctx, input }) => {
+      const userProg = await ctx.prisma.userLessonProgress.findUnique({
+        where: {
+          userId_lessonId: { userId: ctx.session.user.id, lessonId: input },
+        },
+      });
+
+      if (!userProg?.completed) {
+        return ctx.prisma.userLessonProgress.update({
+          where: {
+            userId_lessonId: { userId: ctx.session.user.id, lessonId: input },
+          },
+          data: { completed: true, completedAt: new Date() },
+        });
+      }
+    }),
+  finishModule: protectedProcedure
+    .input(z.string())
+    .mutation(async ({ ctx, input }) => {
+      const userProg = await ctx.prisma.userModuleProgress.findUnique({
+        where: {
+          userId_moduleId: { userId: ctx.session.user.id, moduleId: input },
+        },
+      });
+
+      if (!userProg?.completed) {
+        return ctx.prisma.userModuleProgress.update({
+          where: {
+            userId_moduleId: { userId: ctx.session.user.id, moduleId: input },
+          },
+          data: { completed: true, completedAt: new Date() },
+        });
+      }
+      return null;
     }),
 });

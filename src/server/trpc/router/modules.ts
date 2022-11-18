@@ -41,7 +41,11 @@ export const moduleRouter = router({
         },
         include: {
           lessonProg: {
-            select: { tasksProg: { select: { status: true } } },
+            select: {
+              lessonId: true,
+              completed: true,
+              tasksProg: { select: { taskId: true, status: true } },
+            },
           },
         },
       });
@@ -94,8 +98,8 @@ export const moduleRouter = router({
     }),
   createModWLessons: adminProcedure
     .input(FormSchema)
-    .mutation(({ ctx, input }) => {
-      return ctx.prisma.module.create({
+    .mutation(async ({ ctx, input }) => {
+      const resp = await ctx.prisma.module.create({
         data: {
           name: input.name,
           description: input.description,
@@ -105,7 +109,26 @@ export const moduleRouter = router({
             },
           },
         },
+        select: { lessons: true },
       });
+
+      const data = resp.lessons.map((less, i, arr) => {
+        if (arr[i - 1]) {
+          less.previous = arr[i - 1]?.id ?? "";
+        }
+        if (i < arr.length) {
+          less.next = arr[i + 1]?.id ?? "";
+        }
+        return { id: less.id, next: less.next, previous: less.previous };
+      });
+      return ctx.prisma.$transaction(
+        data.map((less) =>
+          ctx.prisma.lesson.update({
+            where: { id: less.id },
+            data: { next: less.next, previous: less.previous },
+          })
+        )
+      );
     }),
   updSttsOnModSugg: adminProcedure
     .input(z.object({ id: z.string(), readed: z.boolean() }))
