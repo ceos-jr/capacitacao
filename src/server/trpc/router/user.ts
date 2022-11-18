@@ -26,6 +26,7 @@ export const userRouter = router({
         module: { select: { name: true, description: true } },
         lessonProg: { select: { completed: true } },
       },
+      orderBy: { lastTimeSeen: "desc" },
     });
   }),
   getModProg: protectedProcedure.input(z.string()).query(({ ctx, input }) => {
