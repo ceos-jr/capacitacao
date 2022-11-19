@@ -1,4 +1,6 @@
 import {
+  Badge,
+  Button,
   Table,
   TableContainer,
   Tbody,
@@ -7,10 +9,12 @@ import {
   Thead,
   Tr,
 } from "@chakra-ui/react";
-import { Roles } from "@utils/constants";
+import { Roles, TaskStatus } from "@utils/constants";
 import { useSession } from "@utils/useSession";
 import NextLink from "next/link";
 import { type RouterTypes } from "@utils/trpc";
+import EditLessonMenu from "@components/lessons/EditLessonMenu";
+import { AiOutlineEye } from "react-icons/ai";
 
 interface LessonListProps {
   lessons: { id: string; name: string; tasks: { id: string }[] }[];
@@ -18,6 +22,21 @@ interface LessonListProps {
 }
 
 const LessonList = ({ lessons, userModRel }: LessonListProps) => {
+  const getLessStatus = (id: string) => {
+    return (
+      userModRel?.lessonProg.find((less) => less.lessonId === id)?.completed ??
+      false
+    );
+  };
+
+  const getUserCompTask = (lessonId: string) => {
+    return (
+      userModRel?.lessonProg
+        .find((less) => less.lessonId === lessonId)
+        ?.tasksProg.filter((task) => task.status === TaskStatus.Completed)
+        .length ?? 0
+    );
+  };
   const { data: session } = useSession();
   return (
     <TableContainer>
@@ -25,6 +44,7 @@ const LessonList = ({ lessons, userModRel }: LessonListProps) => {
         <Thead>
           <Tr>
             <Th>Nome</Th>
+            <Th>Status</Th>
             <Th isNumeric>Atividades</Th>
             <Th isNumeric>Ações</Th>
           </Tr>
@@ -33,23 +53,28 @@ const LessonList = ({ lessons, userModRel }: LessonListProps) => {
           {lessons.map((lesson) => (
             <Tr key={lesson.id}>
               <Td className="flex gap-x-2 items-center">{lesson.name}</Td>
-              <Td isNumeric>{lesson.tasks.length}</Td>
+              <Td>
+                {!userModRel ? (
+                  "não inscrito"
+                ) : getLessStatus(lesson.id) ? (
+                  <Badge colorScheme="green">Completado</Badge>
+                ) : (
+                  <Badge colorScheme="red">Em progresso</Badge>
+                )}
+              </Td>
+              <Td isNumeric>
+                {!userModRel
+                  ? lesson.tasks.length
+                  : `${getUserCompTask(lesson.id)}/${lesson.tasks.length}`}
+              </Td>
               <Td isNumeric>
                 {userModRel && (
-                  <NextLink
-                    href={`/lessons/${lesson.id}`}
-                    className="p-3 mr-2 font-bold bg-gray-200 rounded-md transition-colors cursor-pointer hover:bg-gray-300"
-                  >
-                    View
+                  <NextLink href={`/lessons/${lesson.id}`} className="mr-2">
+                    <Button leftIcon={<AiOutlineEye />}>Ver</Button>
                   </NextLink>
                 )}
                 {session?.user?.role === Roles.Admin && (
-                  <NextLink
-                    href={`/lessons/${lesson.id}/edit`}
-                    className="p-3 mr-2 font-bold bg-gray-200 rounded-md transition-colors cursor-pointer hover:bg-gray-300"
-                  >
-                    Edit
-                  </NextLink>
+                  <EditLessonMenu lessonId={lesson.id} />
                 )}
               </Td>
             </Tr>

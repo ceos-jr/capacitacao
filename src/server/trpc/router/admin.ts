@@ -51,7 +51,9 @@ export const adminRouter = router({
     });
   }),
   attributeGrade: adminProcedure
-    .input(z.object({ taskId: z.string(), userId: z.string() }))
+    .input(
+      z.object({ taskId: z.string(), userId: z.string(), grade: z.number() })
+    )
     .mutation(({ ctx, input }) => {
       return ctx.prisma.userTaskProgress.update({
         where: {
@@ -61,9 +63,13 @@ export const adminRouter = router({
           },
         },
         data: {
+          grade: input.grade,
           completedAt: new Date(),
           status: TaskStatus.Completed,
         },
       });
     }),
+  delModule: adminProcedure.input(z.string()).mutation(({ ctx, input }) => {
+    return ctx.prisma.module.delete({ where: { id: input } });
+  }),
 });

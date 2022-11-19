@@ -29,7 +29,7 @@ const SeeSubmissionModal = ({
     <Modal isOpen={isOpen} onClose={onClose}>
       <ModalOverlay />
       <ModalContent className="self-center place-self-center">
-        <ModalHeader>
+        <ModalHeader className="p-2">
           Atividade {taskname} de {username}
         </ModalHeader>
         <ModalCloseButton />

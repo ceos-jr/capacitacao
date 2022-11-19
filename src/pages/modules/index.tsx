@@ -4,6 +4,7 @@ import AllModules from "@components/modules/AllModules";
 import UnfinishedUserModules from "@components/modules/UnfinishedUserModules";
 import { type GetServerSideProps } from "next";
 import { getServerAuthSession } from "src/server/common/get-server-auth-session";
+import CompletedUserModules from "@components/modules/CompletedUserModules";
 
 const Modules = () => {
   return (
@@ -14,6 +15,7 @@ const Modules = () => {
       </Head>
       <main className="container flex flex-col gap-4 p-4 mx-auto h-max">
         <UnfinishedUserModules />
+        <CompletedUserModules />
         <AllModules />
       </main>
     </>

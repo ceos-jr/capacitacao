@@ -3,11 +3,11 @@ import ModProgCard from "@components/home/ModProgCard";
 import { trpc } from "@utils/trpc";
 import ModuleLoadingSke from "./ModuleLoadingSkeleton";
 
-const UnfinishedUserModules = () => {
-  const unfUserMod = trpc.user.getUnfMod.useQuery();
+const CompletedUserModules = () => {
+  const compUserMod = trpc.user.getCompMod.useQuery();
   return (
     <>
-      {!unfUserMod.data ? (
+      {!compUserMod.data ? (
         <>
           <Skeleton height="40px" />
           <SimpleGrid columns={{ sm: 2, md: 3, lg: 4 }} gap={6}>
@@ -20,16 +20,13 @@ const UnfinishedUserModules = () => {
         <>
           {" "}
           <Heading as="h1" size="2xl">
-            Módulos não completados
+            Módulos completados
           </Heading>
-          {unfUserMod.data.length === 0 ? (
-            <Text>
-              Nenhum módulo não completado foi encontrado, por favor se inscreva
-              em um módulo
-            </Text>
+          {compUserMod.data.length === 0 ? (
+            <Text>Nenhum módulo completado foi encontrado</Text>
           ) : (
             <SimpleGrid columns={{ sm: 2, md: 3, lg: 4 }} gap={6}>
-              {unfUserMod.data.map((mod) => (
+              {compUserMod.data.map((mod) => (
                 <ModProgCard
                   key={`${mod.moduleId}_unf`}
                   name={mod.module.name}
@@ -48,4 +45,4 @@ const UnfinishedUserModules = () => {
   );
 };
 
-export default UnfinishedUserModules;
+export default CompletedUserModules;

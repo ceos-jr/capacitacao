@@ -5,6 +5,7 @@ import {
   Heading,
   LinkBox,
   LinkOverlay,
+  Badge,
 } from "@chakra-ui/react";
 import moment from "moment";
 import NextLink from "next/link";
@@ -18,6 +19,7 @@ interface ModProgCardProps {
   description: string | null;
   lastTimeSeen: Date;
   lessonProg: { completed: boolean }[];
+  completed: boolean;
 }
 
 const ModProgCard = ({
@@ -26,6 +28,7 @@ const ModProgCard = ({
   description,
   lastTimeSeen,
   lessonProg,
+  completed,
 }: ModProgCardProps) => {
   const updateLastSeen = trpc.user.updModLastSeen.useMutation();
   return (
@@ -34,8 +37,16 @@ const ModProgCard = ({
       className="overflow-hidden relative shadow-lg"
       onClick={() => updateLastSeen.mutate(id)}
     >
+      {completed && (
+        <Badge
+          colorScheme="green"
+          className="absolute top-0 right-0 z-10 m-2 w-max"
+        >
+          Completado
+        </Badge>
+      )}
       <LinkBox
-        p="5"
+        p="6"
         h="full"
         borderWidth="1px"
         rounded="md"
@@ -59,15 +70,19 @@ const ModProgCard = ({
         </Heading>
         <Text>{description && description}</Text>
       </LinkBox>
-      <Progress
-        hasStripe
-        isAnimated
-        colorScheme="whatsapp"
-        value={
-          lessonProg.filter((less) => less.completed).length / lessonProg.length
-        }
-        className="absolute right-0 left-0 -inset-3 w-full rounded-b-lg"
-      />
+      {!completed && (
+        <Progress
+          hasStripe
+          isAnimated
+          colorScheme="whatsapp"
+          value={
+            (lessonProg.filter((less) => less.completed).length /
+              lessonProg.length) *
+            100
+          }
+          className="absolute right-0 left-0 -inset-3 w-full rounded-b-lg"
+        />
+      )}
     </NextLink>
   );
 };

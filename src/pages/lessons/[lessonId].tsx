@@ -21,6 +21,7 @@ import { useRouter } from "next/router";
 import { AiOutlineInbox } from "react-icons/ai";
 import { getServerAuthSession } from "src/server/common/get-server-auth-session";
 import DisplayMarkdown from "@components/Layout/DisplayMarkdown";
+import LessonFooter from "@components/lessons/LessonFooter";
 
 moment.locale("pt-br");
 
@@ -94,6 +95,7 @@ const Lesson = () => {
               projects={lesson.data.projects}
             />
             <TaskList lessonId={lessonId} tasks={lesson.data.tasks} />
+            <LessonFooter {...lesson.data} />
           </>
         )}
       </main>
