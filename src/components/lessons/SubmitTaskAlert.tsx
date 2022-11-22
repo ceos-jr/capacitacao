@@ -66,9 +66,10 @@ const SubmitTaskAlert = ({
       onClose={onClose}
       isOpen={isOpen}
       isCentered
+      size="6xl"
     >
       <AlertDialogOverlay />
-      <AlertDialogContent>
+      <AlertDialogContent className="overflow-y-auto max-h-96">
         <AlertDialogHeader>Atividade {task?.name}</AlertDialogHeader>
         <AlertDialogCloseButton />
         <AlertDialogBody>
